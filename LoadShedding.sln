@@ -1,0 +1,112 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CDACCBBE-1F18-4DAE-A196-F5DE80EF8BEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{693C5879-B401-4398-BAA1-7FAF8B610BDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{BB0DD68C-4E4B-46DE-86B0-BA365448F9A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit", "unit", "{E149B487-146C-4AA4-BFC9-4A42FBEA3E05}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.WebApi", "samples\Samples.WebApi\Samples.WebApi.csproj", "{8853CFF3-987F-469A-9D3D-24C875B7DFB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration", "integration", "{6143CC7F-F882-4A90-9CAB-E11597429CC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmark", "benchmark", "{D91E6E3A-4165-4934-9462-E62B04250932}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "performance", "performance", "{A9CDBF8F-C28F-48CC-A01F-6BE76A3DD5A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding", "src\Farfetch.LoadShedding\Farfetch.LoadShedding.csproj", "{59E73202-B2B1-4098-94B3-348C853C6583}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.AspNetCore", "src\Farfetch.LoadShedding.AspNetCore\Farfetch.LoadShedding.AspNetCore.csproj", "{95D50DC0-3988-4C6A-BCD4-0730C63978ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.Prometheus", "src\Farfetch.LoadShedding.Prometheus\Farfetch.LoadShedding.Prometheus.csproj", "{CBE1E761-9C83-41D4-99FF-7BF84DC569C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.BenchmarkTests", "tests\benchmark\Farfetch.LoadShedding.BenchmarkTests\Farfetch.LoadShedding.BenchmarkTests.csproj", "{2FE97B8B-EADA-4C91-A0B4-437252779982}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.IntegrationTests", "tests\integration-tests\Farfetch.LoadShedding.IntegrationTests\Farfetch.LoadShedding.IntegrationTests.csproj", "{4C07C337-E40E-4BD6-8F48-47072B07716B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.PerformanceTests", "tests\performance-tests\Farfetch.LoadShedding.PerformanceTests\Farfetch.LoadShedding.PerformanceTests.csproj", "{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.AspNetCore.Tests", "tests\unit-tests\Farfetch.LoadShedding.AspNetCore.Tests\Farfetch.LoadShedding.AspNetCore.Tests.csproj", "{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farfetch.LoadShedding.Tests", "tests\unit-tests\Farfetch.LoadShedding.Tests\Farfetch.LoadShedding.Tests.csproj", "{0BD82D67-CE42-4EB8-AF58-703AB143DF05}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B0CD1D6-DFFB-47B0-9429-DC58F22ABC50}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		docker-compose.sample.yaml = docker-compose.sample.yaml
+		docker-compose.yaml = docker-compose.yaml
+		deploy\docker\Dockerfile = deploy\docker\Dockerfile
+		Makefile = Makefile
+		deploy\docker\Sample.Dockerfile = deploy\docker\Sample.Dockerfile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8853CFF3-987F-469A-9D3D-24C875B7DFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8853CFF3-987F-469A-9D3D-24C875B7DFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8853CFF3-987F-469A-9D3D-24C875B7DFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8853CFF3-987F-469A-9D3D-24C875B7DFB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59E73202-B2B1-4098-94B3-348C853C6583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59E73202-B2B1-4098-94B3-348C853C6583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59E73202-B2B1-4098-94B3-348C853C6583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59E73202-B2B1-4098-94B3-348C853C6583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D50DC0-3988-4C6A-BCD4-0730C63978ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D50DC0-3988-4C6A-BCD4-0730C63978ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D50DC0-3988-4C6A-BCD4-0730C63978ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D50DC0-3988-4C6A-BCD4-0730C63978ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE1E761-9C83-41D4-99FF-7BF84DC569C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE1E761-9C83-41D4-99FF-7BF84DC569C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE1E761-9C83-41D4-99FF-7BF84DC569C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE1E761-9C83-41D4-99FF-7BF84DC569C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FE97B8B-EADA-4C91-A0B4-437252779982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE97B8B-EADA-4C91-A0B4-437252779982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE97B8B-EADA-4C91-A0B4-437252779982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FE97B8B-EADA-4C91-A0B4-437252779982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C07C337-E40E-4BD6-8F48-47072B07716B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C07C337-E40E-4BD6-8F48-47072B07716B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C07C337-E40E-4BD6-8F48-47072B07716B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C07C337-E40E-4BD6-8F48-47072B07716B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BD82D67-CE42-4EB8-AF58-703AB143DF05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD82D67-CE42-4EB8-AF58-703AB143DF05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD82D67-CE42-4EB8-AF58-703AB143DF05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD82D67-CE42-4EB8-AF58-703AB143DF05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E149B487-146C-4AA4-BFC9-4A42FBEA3E05} = {693C5879-B401-4398-BAA1-7FAF8B610BDD}
+		{8853CFF3-987F-469A-9D3D-24C875B7DFB4} = {BB0DD68C-4E4B-46DE-86B0-BA365448F9A2}
+		{6143CC7F-F882-4A90-9CAB-E11597429CC4} = {693C5879-B401-4398-BAA1-7FAF8B610BDD}
+		{D91E6E3A-4165-4934-9462-E62B04250932} = {693C5879-B401-4398-BAA1-7FAF8B610BDD}
+		{A9CDBF8F-C28F-48CC-A01F-6BE76A3DD5A2} = {693C5879-B401-4398-BAA1-7FAF8B610BDD}
+		{59E73202-B2B1-4098-94B3-348C853C6583} = {CDACCBBE-1F18-4DAE-A196-F5DE80EF8BEE}
+		{95D50DC0-3988-4C6A-BCD4-0730C63978ED} = {CDACCBBE-1F18-4DAE-A196-F5DE80EF8BEE}
+		{CBE1E761-9C83-41D4-99FF-7BF84DC569C5} = {CDACCBBE-1F18-4DAE-A196-F5DE80EF8BEE}
+		{2FE97B8B-EADA-4C91-A0B4-437252779982} = {D91E6E3A-4165-4934-9462-E62B04250932}
+		{4C07C337-E40E-4BD6-8F48-47072B07716B} = {6143CC7F-F882-4A90-9CAB-E11597429CC4}
+		{A7D2B85A-AF4C-4CD2-92AA-99F2933A570D} = {A9CDBF8F-C28F-48CC-A01F-6BE76A3DD5A2}
+		{3CC2B32C-6931-4E2E-96B6-C7E0480A9C08} = {E149B487-146C-4AA4-BFC9-4A42FBEA3E05}
+		{0BD82D67-CE42-4EB8-AF58-703AB143DF05} = {E149B487-146C-4AA4-BFC9-4A42FBEA3E05}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CAA1372-4CC5-492D-8CB3-3D426B8C4E6A}
+	EndGlobalSection
+EndGlobal

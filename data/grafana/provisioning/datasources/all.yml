@@ -1,0 +1,9 @@
+﻿datasources:
+-  access: 'prometheus'                     
+   editable: true                      
+   is_default: true                    
+   name: 'LoadSheddingMetrics'                      
+   org_id: 1                           
+   type: 'prometheus'                  
+   url: 'http://prometheus:9090'        
+   version: 1                          
