@@ -1,0 +1,6 @@
+﻿- name: 'default'       # name of this dashboard configuration (not dashboard itself)
+  org_id: 1             # id of the org to hold the dashboard
+  folder: ''            # name of the folder to put the dashboard (http://docs.grafana.org/v5.0/reference/dashboard_folders/)
+  type: 'file'          # type of dashboard description (json files)
+  options:
+    folder: '/var/lib/grafana/dashboards'       # where dashboards are

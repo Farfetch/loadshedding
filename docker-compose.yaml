@@ -1,0 +1,44 @@
+version: "3.4"
+
+services:      
+  unit-tests:
+    container_name: loadshedding-unit-tests
+    image: loadshedding-unit-tests
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: unit-tests
+
+  integration-tests:
+    container_name: loadshedding-integration-tests
+    image: loadshedding-integration-tests
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: integration-tests
+
+  performance-tests-sample:
+    container_name: loadshedding-performance-tests-sample
+    image: loadshedding-performance-tests-sample
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: performance-tests-sample
+
+  performance-tests-sample-no-limiter:
+    container_name: loadshedding-performance-tests-sample-no-limiter
+    image: loadshedding-performance-tests-sample-no-limiter
+    environment:
+      - UseLoadShedding=false
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: performance-tests-sample
+
+  performance-tests:
+    container_name: loadshedding-performance-tests
+    image: loadshedding-performance-tests
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: performance-tests

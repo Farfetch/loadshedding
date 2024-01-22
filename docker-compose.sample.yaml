@@ -1,0 +1,44 @@
+version: "3.4"
+
+services:
+  samples-webapi:
+    container_name: loadshedding-samples-webapi
+    image: loadshedding-samples-webapi
+    ports:
+      - "5261:5261"
+    environment:
+      - MongoConnectionString=mongodb://mongo:27017/loadshedding
+    build:
+      context: .
+      dockerfile: deploy/docker/Samples.Dockerfile
+    depends_on:
+      - mongo
+
+  prometheus:
+    image: prom/prometheus:v2.42.0
+    container_name: loadshedding-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:9.3.6
+    container_name: loadshedding-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana/provisioning:/etc/grafana/provisioning
+      - ./data/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+
+  mongo:
+    image: mongo:4.2.0
+    container_name: loadshedding-mongodb
+    ports:
+      - "27017:27017"

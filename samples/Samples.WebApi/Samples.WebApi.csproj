@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+      <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Farfetch.LoadShedding.Prometheus\Farfetch.LoadShedding.Prometheus.csproj" />
+    <ProjectReference Include="..\..\src\Farfetch.LoadShedding\Farfetch.LoadShedding.csproj" />
+  </ItemGroup>
+
+</Project>
