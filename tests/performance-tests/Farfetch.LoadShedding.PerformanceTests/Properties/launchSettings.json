@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Farfetch.LoadShedding.PerformanceTests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:9025"
+    }
+  }
+}
