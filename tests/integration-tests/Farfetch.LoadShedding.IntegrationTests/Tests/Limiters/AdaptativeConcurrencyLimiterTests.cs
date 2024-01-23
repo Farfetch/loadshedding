@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Net;
 using Farfetch.LoadShedding.AspNetCore.Options;
 using Farfetch.LoadShedding.Configurations;
