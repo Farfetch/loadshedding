@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Calculators;
+using Farfetch.LoadShedding.Calculators;
 using Farfetch.LoadShedding.Configurations;
 using Farfetch.LoadShedding.Limiters;
 using Farfetch.LoadShedding.Events;

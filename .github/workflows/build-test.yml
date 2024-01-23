@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  pull_request:
+
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test:
+
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: GITHUB CONTEXT
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Commit Lint
+        uses: wagoid/commitlint-github-action@master
+        with:
+          failOnWarnings: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Framework
+        run:  |
+          dotnet build LoadShedding.sln -c Release
+
+      - name: UnitTests
+        run: |
+          dotnet test LoadShedding.sln --filter Category=Unit -c Release --logger "console;verbosity=detailed"
+
+      - name: IntegrationTests
+        run: |
+          dotnet test LoadShedding.sln --filter Category=Integration -c Release --logger "console;verbosity=detailed"
+
+

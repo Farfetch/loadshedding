@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Measures;
+using Farfetch.LoadShedding.Measures;
 using Xunit;
 
 namespace Farfetch.LoadShedding.Tests.Measures
