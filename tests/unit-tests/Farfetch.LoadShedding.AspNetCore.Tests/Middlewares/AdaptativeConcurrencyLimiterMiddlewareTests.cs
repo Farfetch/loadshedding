@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Middlewares;
+using Farfetch.LoadShedding.AspNetCore.Middlewares;
 using Farfetch.LoadShedding.AspNetCore.Options;
 using Farfetch.LoadShedding.Exceptions;
 using Farfetch.LoadShedding.Limiters;

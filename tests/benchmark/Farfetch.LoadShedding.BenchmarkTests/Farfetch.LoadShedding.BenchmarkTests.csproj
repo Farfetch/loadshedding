@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\..\src\Farfetch.LoadShedding\Farfetch.LoadShedding.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="$(MSBuildProjectDirectory)/../Traits.cs" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Configurations;
+using Farfetch.LoadShedding.Configurations;
 using Farfetch.LoadShedding.Exceptions;
 using Xunit;
 

@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Attributes;
+using Farfetch.LoadShedding.AspNetCore.Attributes;
 using Farfetch.LoadShedding.AspNetCore.Resolvers;
 using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Http;

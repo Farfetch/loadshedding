@@ -1,0 +1,26 @@
+name: Publish
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Pack
+        run: dotnet pack ./LoadShedding.sln -c Release /p:Version=${{ github.event.release.tag_name }} -o ./drop
+
+      - name: Publish
+        run: dotnet nuget push ./drop/**/*.nupkg -k ${{ secrets.NUGET_PUBLISH_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Print Version
+        run: echo ${{ github.event.release.tag_name }}
