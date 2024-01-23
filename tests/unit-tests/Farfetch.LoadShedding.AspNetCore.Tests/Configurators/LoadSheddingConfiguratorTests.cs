@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Configurators;
+using Farfetch.LoadShedding.AspNetCore.Configurators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

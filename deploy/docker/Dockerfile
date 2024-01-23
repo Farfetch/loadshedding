@@ -43,7 +43,7 @@ RUN for file in $(ls *.csproj); do mkdir -p tests/unit-tests/${file%.*}/ && mv $
 # 1.3 Integration tests
 COPY tests/integration-tests/Farfetch.LoadShedding.IntegrationTests/Farfetch.LoadShedding.IntegrationTests.csproj tests/integration-tests/Farfetch.LoadShedding.IntegrationTests/Farfetch.LoadShedding.IntegrationTests.csproj
 
-# 1.4 Perfornance tests
+# 1.4 Performance tests
 COPY tests/performance-tests/Farfetch.LoadShedding.PerformanceTests/Farfetch.LoadShedding.PerformanceTests.csproj tests/performance-tests/Farfetch.LoadShedding.PerformanceTests/Farfetch.LoadShedding.PerformanceTests.csproj
 
 # 1.5 - Restore nuget packages

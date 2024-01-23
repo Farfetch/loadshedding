@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Events;
+using Farfetch.LoadShedding.Events;
 using Farfetch.LoadShedding.Events.Args;
 using Farfetch.LoadShedding.Exceptions;
 using Farfetch.LoadShedding.Tasks;
