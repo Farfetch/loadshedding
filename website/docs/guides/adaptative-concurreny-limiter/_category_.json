@@ -1,5 +1,5 @@
 {
-  "label": "Guides",
+  "label": "Adaptative Concurrency Limiter",
   "position": 3,
   "link": {
     "type": "generated-index"

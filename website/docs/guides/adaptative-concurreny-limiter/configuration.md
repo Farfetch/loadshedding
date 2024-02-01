@@ -1,39 +1,29 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
-# Register Concurrency Adaptative Limiter
+# Configuration
 
-The concurrency adaptative limiter provides a capacity to auto-adjust the accepted traffic based on the runtime performance, ensuring that latencies remain low.
+In this section, we will introduce how configuration is done in LoadShedding.
 
-![Concurrency Adaptative Limiter](concurrency_limiter_graph.png)
+LoadShedding is a highly configured framework. You can customize it through a Fluent Builder.
 
-As can be seen in the previous image (adapted from [Performance Under Load Article](https://netflixtechblog.medium.com/performance-under-load-3e6fa9a60581)):
+There are a few options to configure LoadShedding:
+- [Configuration](#configuration)
+  - [Options Configuration](#options-configuration)
+  - [Events Listener Configuration](#events-listener-configuration)
+  - [Custom Queue Size Calculator Configuration](#custom-queue-size-calculator-configuration)
+    - [1 - Implement the IQueueSizeCalculator interface](#1---implement-the-iqueuesizecalculator-interface)
+    - [2 - Use a custom QueueSizeCalculator](#2---use-a-custom-queuesizecalculator)
+  - [Request Prioritization Configuration](#request-prioritization-configuration)
+    - [Http Header Priority Resolver](#http-header-priority-resolver)
+    - [Endpoint Priority Resolver](#endpoint-priority-resolver)
+  - [Metrics](#metrics)
+    - [Install Package](#install-package)
+    - [Configure](#configure)
+    - [Reference Documentation](#reference-documentation)
 
-* the requests are processed since the number of capacity + the number of queue slots is not reached.
-* as soon as the maximum concurrency limit is reached (possible to configure), the requests will enter a queue.
-* the requests that are waiting in the queue, will be released by a FIFO (First In, First Out) methodology.
-* as soon as the maximum queue size is reached, the system will automatically reject the following requests, returning a 503 - Service Unavailable error.
-* the latency will be kept low independent of the number of requests.
-* the capacity/concurrency limit will be automatically calculated through some algorithms taking into account the service performance degradation.
-
-## How to use it
-
-### Base Configuration
-
-Install all the needed services by calling `IServiceCollection.AddLoadShedding`.
-
-```csharp
-app.AddLoadShedding();
-```
-
-Extend the `IApplicationBuilder` using the `UseLoadShedding` extension method.
-
-```csharp
-app.UseLoadShedding();
-```
-
-### Options Configuration
+## Options Configuration
 
 It is possible to have access to additional configurations when registering the services.
 
@@ -65,15 +55,15 @@ By default, the following `ConcurrencyOptions` values will be used:
 | InitialQueueSize | The starting number of requests in the queue | 20 |
 | QueueTimeoutInMs | The queue waiting timeout, when the timeout is reached the task will be canceled and will throw an OperationCanceledException. | Infinite |
 
-**Note:** These default values were defined based on:
-
-* investigation of the [Netflix Concurrency Limit](https://github.com/Netflix/concurrency-limits) tool.
-* having a huge margin of tolerance: accepting 500 requests simultaneously (and 50 more going to the queue - initially).
+:::note 
+These default values were defined based on:
+* Investigation of the [Netflix Concurrency Limit](https://github.com/Netflix/concurrency-limits) tool.
+* Having a huge margin of tolerance: accepting 500 requests simultaneously (and 50 more going to the queue - initially).
+:::
 
 On the other hand, if needed, these settings can be completely overridden by using the `ConcurrencyOptions` property:
 
 ```csharp
-
 services.AddLoadShedding((provider, options) =>
 {
     options.AdaptativeLimiter.ConcurrencyOptions.MinConcurrencyLimit = 5;
@@ -92,7 +82,7 @@ When defining the options values, the following criteria need to be accomplished
 * InitialConcurrencyLimit >= MinConcurrencyLimit && MaxConcurrencyLimit >= InitialConcurrencyLimit
 * InitialQueueSize >= MinQueueSize
 
-### Events Listener Configuration
+## Events Listener Configuration
 
 It is possible to monitor the service performance by subscribing internal events:
 
@@ -118,7 +108,7 @@ services.AddLoadShedding((provider, options) =>
 });
 ```
 
-### Custom Queue Size Calculator Configuration
+## Custom Queue Size Calculator Configuration
 
 Calculating the queue size has the main goal to find the maximum value of requests allowed to be in the queue.
 
@@ -126,7 +116,7 @@ The default queue size calculator is based on the square root of the concurrency
 
 Optionally, the strategy can be overridden by:
 
-#### 1 - Implement the IQueueSizeCalculator interface
+### 1 - Implement the IQueueSizeCalculator interface
 
 ```csharp
     public class CustomQueueSizeCalculator : IQueueSizeCalculator
@@ -140,7 +130,7 @@ Optionally, the strategy can be overridden by:
     }
 ```
 
-#### 2 - Use a custom QueueSizeCalculator
+### 2 - Use a custom QueueSizeCalculator
 
 ```csharp
 services.AddLoadShedding((provider, options) =>
@@ -149,13 +139,13 @@ services.AddLoadShedding((provider, options) =>
 });
 ```
 
-### Request Prioritization Configuration
+## Request Prioritization Configuration
 
 It is possible to configure the settings to establish priority resolvers for requests.
 
 At present, only one strategy is supported, which means that solely the most recently configured strategy will be implemented.
 
-#### Http Header Priority Resolver
+### Http Header Priority Resolver
 
 With the extension `UseHeaderPriorityResolver` it will automatically convert the value of the HTTP Header `X-Priority` to the request priority.
 
@@ -168,7 +158,7 @@ services.AddLoadShedding((provider, options) =>
 });
 ```
 
-#### Endpoint Priority Resolver
+### Endpoint Priority Resolver
 
 With the extension `UseEndpointPriorityResolver` it will automatically load the Priority defined for the endpoint from the `EndpointPriorityAttribute`.
 
@@ -199,17 +189,17 @@ public async Task<IActionResult> GetPeopleAsync()
 }
 ```
 
-### Including Metrics
+## Metrics
 
 The library has the option to export adaptative limiter metrics to Prometheus.
 
-#### Install Package
+### Install Package
 
 ```bash
 dotnet add package Farfetch.LoadShedding.Prometheus
 ```
 
-#### Configure
+### Configure
 
 Use the `LoadSheddingOptions` extension method `AddMetrics()`.
 The metrics includes the label `method` that describes the HTTP method. For this value to be correctly parsed, the `HTTPContextAccessor` should be included otherwise the `method` label will output the value `UNKNOWN`.
@@ -234,7 +224,7 @@ options.AddMetrics(options =>
 });
 ```
 
-#### Reference Documentation
+### Reference Documentation
 
 | Metric Name | Metric Description | Metric Type |  Labels |
 | ----------- | ------------------ | ----------- |  ------ |
