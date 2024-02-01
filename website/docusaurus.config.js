@@ -16,7 +16,7 @@ const config = {
   url: 'https://farfetch.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/loadshedding/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -40,14 +40,9 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          routeBasePath: '/', // Serve the docs at the site's root
-          sidebarPath: './sidebars.js',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/farfetch/loadhsedding/tree/main/website/',
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/farfetch/loadhsedding/tree/main/website/',
         },
-        blog: false, 
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -66,8 +61,17 @@ const config = {
         logo: {
           alt: 'LoadShedding',
           src: 'img/logo.svg',
+          href: 'https://farfetch.github.io/loadshedding',
+          target: '_self',
+          height: 32,
         },
         items: [
+          {
+            type: 'doc',
+            docId: 'introduction',
+            position: 'right',
+            label: 'Docs',
+          },
           {
             href: 'https://github.com/farfetch/loadshedding',
             label: 'GitHub',
@@ -83,15 +87,15 @@ const config = {
             items: [
               {
                 label: 'Introduction',
-                to: '/',
+                to: '/docs',
               },
               {
                 label: 'Getting Started',
-                to: '/category/getting-started',
+                to: '/docs/category/getting-started',
               },
               {
                 label: 'Guides',
-                to: '/category/guides',
+                to: '/docs/category/guides',
               }
             ]
           },

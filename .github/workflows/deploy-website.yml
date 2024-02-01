@@ -16,6 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - run: dotnet tool install --global gsferreira.XmlDocMarkdown.Docusaurus --version 0.0.1-beta3 # using this version while the Pull Request isn't accepted here: https://github.com/ejball/XmlDocMarkdown/pull/126
+        shell: bash
+
+      - name: .NET Publish
+        run: dotnet publish LoadShedding.sln -c Release -o ./drop
+
+      - run: dotnet tool list --global
+        shell: bash
+
+      - run: xmldocmd-docusaurus ./drop/Farfetch.LoadShedding.dll website/docs/reference/Farfetch.LoadShedding --type-folders
+        shell: bash
+
+      - run: xmldocmd-docusaurus ./drop/Farfetch.LoadShedding.AspNetCore.dll website/docs/reference/Farfetch.LoadShedding.AspNetCore --type-folders
+        shell: bash
+
+      - run: xmldocmd-docusaurus ./drop/Farfetch.LoadShedding.Prometheus.dll website/docs/reference/Farfetch.LoadShedding.Prometheus --type-folders
+        shell: bash
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18

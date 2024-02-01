@@ -12,13 +12,13 @@ dotnet add package Farfetch.LoadShedding.AspNetCore
 
 ## How to Use
 
-Add the LoadShedding services by calling the `AddLoadShedding` extension.
+Add the LoadShedding services by calling the `AddLoadShedding` extension:
 
 ```csharp
 services.AddLoadShedding();
 ```
 
-Use the `UseLoadShedding` extension method by extending the `IApplicationBuilder` interface.
+Use the `UseLoadShedding` extension method by extending the `IApplicationBuilder` interface:
 
 ```csharp
 app.UseLoadShedding();
