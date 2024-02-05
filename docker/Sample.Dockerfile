@@ -1,6 +1,6 @@
 ARG FROM_REPO=mcr.microsoft.com/dotnet
-ARG DOTNET_SDK_IMAGE=sdk:sdk:8.0-jammy
-ARG ASPNET_RUNTIME_IMAGE=aspnet:aspnet:8.0-jammy
+ARG DOTNET_SDK_IMAGE=sdk:8.0-jammy
+ARG ASPNET_RUNTIME_IMAGE=aspnet:8.0-jammy
 ARG RUNTIME_IDENTIFIER=linux-x64
 
 FROM ${FROM_REPO}/${DOTNET_SDK_IMAGE} as sdk-image
