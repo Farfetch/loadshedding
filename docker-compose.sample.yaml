@@ -10,7 +10,7 @@ services:
       - MongoConnectionString=mongodb://mongo:27017/loadshedding
     build:
       context: .
-      dockerfile: deploy/docker/Samples.Dockerfile
+      dockerfile: docker/Sample.Dockerfile
     depends_on:
       - mongo
 
