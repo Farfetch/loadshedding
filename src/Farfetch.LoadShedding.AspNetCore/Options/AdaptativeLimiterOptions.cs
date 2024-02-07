@@ -42,10 +42,10 @@ namespace Farfetch.LoadShedding.AspNetCore.Options
             => this.UseHeaderPriorityResolver(HttpHeaderPriorityResolver.DefaultPriorityHeaderName);
 
         /// <summary>
-        /// Sets the HttpHeaderPriorityResolver, it converts the header {{headerName}} to the request priority (critical, normal, noncritical).
+        /// Configures the priority resolver based on a specific HTTP header.
         /// </summary>
-        /// <param name="headerName">The name of the header with the priority value.</param>
-        /// <returns>AdaptativeLimiterOptions</returns>
+        /// <param name="headerName">The name of the HTTP header to be used for determining the priority.</param>
+        /// <returns>The adaptive limiter configuration options.</returns>
         public AdaptativeLimiterOptions UseHeaderPriorityResolver(string headerName)
             => this.UsePriorityResolver(new HttpHeaderPriorityResolver(headerName));
 
