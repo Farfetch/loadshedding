@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Farfetch.LoadShedding.AspNetCore.Configurators;
 using Farfetch.LoadShedding.Prometheus;
 using Farfetch.LoadShedding.Prometheus.Metrics;
@@ -18,7 +18,7 @@ namespace Farfetch.LoadShedding
         /// Extension method to include prometheus metrics.
         /// </summary>
         /// <param name="options">The LoadSheddingOptions instance.</param>
-        /// <param name="optionsDelegate"></param>
+        /// <param name="optionsDelegate">The delegate for options</param>
         /// <returns>LoadSheddingOptions</returns>
         public static LoadSheddingOptions AddMetrics(
             this LoadSheddingOptions options,

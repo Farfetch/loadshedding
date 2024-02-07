@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -7,9 +7,9 @@ namespace Farfetch.LoadShedding.AspNetCore.Resolvers
 {
     internal class HttpHeaderPriorityResolver : IPriorityResolver
     {
-        private const string Separator = "-";
-
         internal const string DefaultPriorityHeaderName = "X-Priority";
+
+        private const string Separator = "-";
 
         private readonly string _headerName;
 

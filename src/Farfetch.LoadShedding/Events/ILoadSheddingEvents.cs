@@ -2,6 +2,9 @@ using Farfetch.LoadShedding.Events.Args;
 
 namespace Farfetch.LoadShedding.Events
 {
+    /// <summary>
+    /// Load Shedding events.
+    /// </summary>
     public interface ILoadSheddingEvents
     {
         /// <summary>

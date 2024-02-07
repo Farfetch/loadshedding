@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.AspNetCore.Resolvers;
 using Farfetch.LoadShedding.Configurations;
@@ -17,27 +17,35 @@ namespace Farfetch.LoadShedding.AspNetCore.Options
             this.ConcurrencyOptions = new ConcurrencyOptions();
         }
 
+        /// <summary>
+        /// Gets the Concurrency Options.
+        /// </summary>
         public ConcurrencyOptions ConcurrencyOptions { get; }
 
-        ///// <summary>
-        ///// Sets the EndpointPriorityResolver, it loads the priority from the controller action attribute EndpointPriorityAttribute.
-        ///// </summary>
-        ///// <returns></returns>
+        /// <summary>
+        /// Gets or sets and sets the PriorityResolver.
+        /// </summary>
+        internal IPriorityResolver PriorityResolver { get; set; }
+
+        /// <summary>
+        /// Sets the EndpointPriorityResolver, it loads the priority from the controller action attribute EndpointPriorityAttribute.
+        /// </summary>
+        /// <returns>The AdaptativeLimiterOptions.</returns>
         public AdaptativeLimiterOptions UseEndpointPriorityResolver()
             => this.UsePriorityResolver(new EndpointPriorityResolver());
 
-        ///// <summary>
-        ///// Sets the HttpHeaderPriorityResolver, it converts the header X-Priority to the request priority (critical, normal, noncritical).
-        ///// </summary>
-        ///// <returns>AdaptativeLimiterOptions</returns>
+        /// <summary>
+        /// Sets the HttpHeaderPriorityResolver, it converts the header X-Priority to the request priority (critical, normal, noncritical).
+        /// </summary>
+        /// <returns>AdaptativeLimiterOptions</returns>
         public AdaptativeLimiterOptions UseHeaderPriorityResolver()
             => this.UseHeaderPriorityResolver(HttpHeaderPriorityResolver.DefaultPriorityHeaderName);
 
-        ///// <summary>
-        ///// Sets the HttpHeaderPriorityResolver, it converts the header {{headerName}} to the request priority (critical, normal, noncritical).
-        ///// </summary>
-        ///// <param name="headerName">The name of the header with the priority value.</param>
-        ///// <returns>AdaptativeLimiterOptions</returns>
+        /// <summary>
+        /// Sets the HttpHeaderPriorityResolver, it converts the header {{headerName}} to the request priority (critical, normal, noncritical).
+        /// </summary>
+        /// <param name="headerName">The name of the header with the priority value.</param>
+        /// <returns>AdaptativeLimiterOptions</returns>
         public AdaptativeLimiterOptions UseHeaderPriorityResolver(string headerName)
             => this.UsePriorityResolver(new HttpHeaderPriorityResolver(headerName));
 
@@ -59,7 +67,5 @@ namespace Farfetch.LoadShedding.AspNetCore.Options
             this.PriorityResolver = priorityResolver;
             return this;
         }
-
-        internal IPriorityResolver PriorityResolver { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Farfetch.LoadShedding.AspNetCore.Options;
 using Farfetch.LoadShedding.Calculators;
@@ -22,6 +22,9 @@ namespace Farfetch.LoadShedding.AspNetCore.Configurators
         /// </summary>
         public AdaptativeLimiterOptions AdaptativeLimiter { get; }
 
+        /// <summary>
+        /// Sets the Queue size calculator.
+        /// </summary>
         public IQueueSizeCalculator QueueSizeCalculator { internal get; set; }
 
         internal IList<Action<IServiceProvider, ILoadSheddingEvents>> EventSubscriptions { get; }

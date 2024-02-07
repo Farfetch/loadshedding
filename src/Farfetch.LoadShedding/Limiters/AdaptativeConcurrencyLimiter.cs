@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.Calculators;
@@ -11,10 +11,10 @@ namespace Farfetch.LoadShedding.Limiters
 {
     internal class AdaptativeConcurrencyLimiter : IAdaptativeConcurrencyLimiter, IDisposable
     {
-        private static readonly TimeSpan s_updateCheckInterval = TimeSpan.FromMilliseconds(500);
-
         private const int MaxPercentageForRecovering = 10;
         private const int MinPercentageForUpdatingLimits = 50;
+
+        private static readonly TimeSpan s_updateCheckInterval = TimeSpan.FromMilliseconds(500);
 
         private readonly Timer _updater;
         private readonly ITaskManager _taskManager;

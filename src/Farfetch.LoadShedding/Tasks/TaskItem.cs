@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,14 +12,14 @@ namespace Farfetch.LoadShedding.Tasks
 
         private Stopwatch _waitingTime;
 
-        public Priority Priority { get; private set; }
-
         public TaskItem(Priority priority)
         {
             this.Priority = priority;
             this._lifetime = Stopwatch.StartNew();
             this._taskSource = new TaskCompletionSource<bool>();
         }
+
+        public Priority Priority { get; private set; }
 
         public TaskResult Status { get; private set; } = TaskResult.Pending;
 
@@ -56,14 +56,9 @@ namespace Farfetch.LoadShedding.Tasks
             }
         }
 
-        private void Timeout()
-        {
-            if (this.TryChangeStatus(TaskResult.Timeout))
-            {
-                this._lifetime.Stop();
-            }
-        }
-
+        /// <summary>
+        /// Rejects the item.
+        /// </summary>
         public void Reject()
         {
             if (this.TryChangeStatus(TaskResult.Rejected))
@@ -72,6 +67,9 @@ namespace Farfetch.LoadShedding.Tasks
             }
         }
 
+        /// <summary>
+        /// Completes the task.
+        /// </summary>
         public void Complete()
         {
             if (this.TryChangeStatus(TaskResult.Completed))
@@ -81,16 +79,30 @@ namespace Farfetch.LoadShedding.Tasks
             }
         }
 
+        /// <summary>
+        /// Sets the task as processing.
+        /// </summary>
         public void Process()
         {
             this.Status = TaskResult.Processing;
             this._taskSource.TrySetResult(true);
         }
 
+        /// <summary>
+        /// Dispose the task.
+        /// </summary>
         public void Dispose()
         {
             this._waitingTime?.Stop();
             this._lifetime.Stop();
+        }
+
+        private void Timeout()
+        {
+            if (this.TryChangeStatus(TaskResult.Timeout))
+            {
+                this._lifetime.Stop();
+            }
         }
 
         private bool TryChangeStatus(TaskResult status)
