@@ -17,26 +17,26 @@ RUN mkdir /app
 WORKDIR /app
 
 # 1 - Copy projects
-COPY samples/Samples.WebApi/Samples.WebApi.csproj samples/Samples.WebApi/
+COPY samples/Farfetch.LoadShedding.Samples.WebApi/Farfetch.LoadShedding.Samples.WebApi.csproj samples/Farfetch.LoadShedding.Samples.WebApi/
 COPY ./*/*.csproj ./
 
 #Restore original file paths
 RUN for file in $(ls *.csproj); do mkdir -p ./${file%.*}/ && mv $file ./${file%.*}/ && echo $file; done
 
 # 1.1 - Restore packages
-RUN dotnet restore samples/Samples.WebApi/Samples.WebApi.csproj -r $RUNTIME_IDENTIFIER
+RUN dotnet restore samples/Farfetch.LoadShedding.Samples.WebApi/Farfetch.LoadShedding.Samples.WebApi.csproj -r $RUNTIME_IDENTIFIER
 
 # 2 - Copy all files
 COPY . .
 
 # 3 - Build
-RUN dotnet build -c Release samples/Samples.WebApi/Samples.WebApi.csproj
+RUN dotnet build -c Release samples/Farfetch.LoadShedding.Samples.WebApi/Farfetch.LoadShedding.Samples.WebApi.csproj
 
 ##
 ## Publish
 ##
 FROM build AS publish
-RUN dotnet publish samples/Samples.WebApi/Samples.WebApi.csproj --no-build -c Release -o /out
+RUN dotnet publish samples/Farfetch.LoadShedding.Samples.WebApi/Farfetch.LoadShedding.Samples.WebApi.csproj --no-build -c Release -o /out
 
 ##
 ## Run
@@ -48,4 +48,4 @@ WORKDIR /out
 ENV ASPNETCORE_URLS=http://+:5261
 
 COPY --from=publish /out .
-ENTRYPOINT ["dotnet", "Samples.WebApi.dll"]
+ENTRYPOINT ["dotnet", "Farfetch.LoadShedding.Samples.WebApi.dll"]

@@ -1,9 +1,9 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Resolvers;
+﻿using System;
+using System.Threading.Tasks;
+using Farfetch.LoadShedding.AspNetCore.Resolvers;
 using Farfetch.LoadShedding.Configurations;
 using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
 
 namespace Farfetch.LoadShedding.AspNetCore.Options
 {
@@ -25,7 +25,6 @@ namespace Farfetch.LoadShedding.AspNetCore.Options
         ///// <returns></returns>
         public AdaptativeLimiterOptions UseEndpointPriorityResolver()
             => this.UsePriorityResolver(new EndpointPriorityResolver());
-
 
         ///// <summary>
         ///// Sets the HttpHeaderPriorityResolver, it converts the header X-Priority to the request priority (critical, normal, noncritical).
@@ -49,7 +48,6 @@ namespace Farfetch.LoadShedding.AspNetCore.Options
         /// <returns>AdaptativeLimiterOptions</returns>
         public AdaptativeLimiterOptions UsePriorityResolver(Func<HttpContext, Task<Priority>> priorityResolverFunc)
             => this.UsePriorityResolver(new CustomPriorityResolver(priorityResolverFunc));
-
 
         /// <summary>
         /// Sets a custom priority resolver instance.

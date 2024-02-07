@@ -1,5 +1,4 @@
-﻿using Farfetch.LoadShedding.Prometheus.Metrics;
-using Prometheus;
+﻿using Prometheus;
 
 namespace Farfetch.LoadShedding.Prometheus
 {

@@ -8,6 +8,7 @@ namespace Farfetch.LoadShedding.Exceptions
     public class QueueTimeoutException : TimeoutException
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="QueueTimeoutException"/> class.
         /// Constructs the custom exception.
         /// </summary>
         /// <param name="timeout">The current queue timeout.</param>

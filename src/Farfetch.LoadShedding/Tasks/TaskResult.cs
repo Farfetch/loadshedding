@@ -7,6 +7,6 @@
         Processing,
         Timeout,
         Rejected,
-        Completed
+        Completed,
     }
 }

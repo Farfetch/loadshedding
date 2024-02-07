@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Tasks;
+using Farfetch.LoadShedding.Tasks;
 
 namespace Farfetch.LoadShedding.Events.Args
 {
@@ -13,6 +13,9 @@ namespace Farfetch.LoadShedding.Events.Args
             Reason = reason;
         }
 
+        /// <summary>
+        /// Gets the reason for the item being rejected.
+        /// </summary>
         public string Reason { get; }
     }
 }

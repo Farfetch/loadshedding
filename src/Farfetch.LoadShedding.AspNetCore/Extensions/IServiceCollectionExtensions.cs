@@ -1,8 +1,8 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Configurators;
+﻿using System;
+using Farfetch.LoadShedding.AspNetCore.Configurators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
 
 namespace Microsoft.AspNetCore.Builder
 {

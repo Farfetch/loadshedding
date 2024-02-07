@@ -9,7 +9,7 @@ namespace Farfetch.LoadShedding.PerformanceTests.Controllers
     {
         private static readonly string[] s_summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching",
         };
 
         [HttpGet("GetWeather")]
@@ -19,7 +19,7 @@ namespace Farfetch.LoadShedding.PerformanceTests.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = s_summaries[Random.Shared.Next(s_summaries.Length)]
+                Summary = s_summaries[Random.Shared.Next(s_summaries.Length)],
             })
             .ToArray();
         }
@@ -33,7 +33,7 @@ namespace Farfetch.LoadShedding.PerformanceTests.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = s_summaries[Random.Shared.Next(s_summaries.Length)]
+                Summary = s_summaries[Random.Shared.Next(s_summaries.Length)],
             })
             .ToArray();
         }

@@ -12,9 +12,9 @@ namespace Farfetch.LoadShedding.Measures
     internal class RTTMeasures
     {
         /// <summary>
-        /// After a service overload, response times are likely to be higher than usual. 
-        /// Therefore, it becomes necessary to restore the response time metrics to their normal values. 
-        /// This can be achieved by gradually decreasing the avg RTT that acts as a 
+        /// After a service overload, response times are likely to be higher than usual.
+        /// Therefore, it becomes necessary to restore the response time metrics to their normal values.
+        /// This can be achieved by gradually decreasing the avg RTT that acts as a
         /// mechanism to bring the response time back to its normal level.
         /// In this case it will decrease the avg RTT by 10% each iteration (normally 1 second) until it is stabilized.
         /// </summary>
@@ -27,6 +27,7 @@ namespace Farfetch.LoadShedding.Measures
         private long _avgRTT;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="RTTMeasures"/> class.
         /// Initializes an instance of the class defining the tolerance parameter.
         /// </summary>
         /// <param name="tolerance">A tolerance to control the trade-off between the minimum and the average RTT.</param>
@@ -72,7 +73,7 @@ namespace Farfetch.LoadShedding.Measures
 
         internal void RecoverFromLoad()
         {
-            if (this._isRecovered)
+            if (this.IsRecovered)
             {
                 return;
             }
@@ -80,13 +81,13 @@ namespace Farfetch.LoadShedding.Measures
             Interlocked.Exchange(ref this._totalTime, (int)Math.Floor(this._totalTime * StabilizationFactor));
             Interlocked.Exchange(ref this._avgRTT, (int)Math.Floor(this._totalTime / this._numberOfExecutions));
 
-            if (this._isRecovered)
+            if (this.IsRecovered)
             {
                 this.Reset();
             }
         }
 
-        private bool _isRecovered => (this.MinRTT * this._tolerance) > this.AvgRTT;
+        private bool IsRecovered => (this.MinRTT * this._tolerance) > this.AvgRTT;
 
         private void Reset()
         {

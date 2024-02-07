@@ -28,7 +28,7 @@ namespace Farfetch.LoadShedding.Calculators
 
             var gradient = this.CalculateConcurrencyLimitGradient(context);
 
-            var newLimit = currentLimit * gradient + context.CurrentQueueCount;
+            var newLimit = (currentLimit * gradient) + context.CurrentQueueCount;
 
             if (newLimit < currentLimit)
             {

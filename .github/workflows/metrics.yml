@@ -61,29 +61,3 @@ jobs:
       with:
         name: items-closed
         path: ./issue_metrics.md
-
-    - name: Run issue-metrics tool for discussions opened last month
-      id: opened-discussions-metrics
-      uses: github/issue-metrics@v2
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SEARCH_QUERY: 'repo:farfetch/loadshedding type:discussions created:${{ env.last_month }} -reason:"not planned"'
-
-    - name: Upload for opened discussions
-      uses: actions/upload-artifact@v3
-      with:
-        name: discussions-opened
-        path: ./issue_metrics.md
-
-    - name: Run issue-metrics tool for discussions closed last month
-      id: closed-discussions-metrics
-      uses: github/issue-metrics@v2
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SEARCH_QUERY: 'repo:farfetch/loadshedding type:discussions closed:${{ env.last_month }} -reason:"not planned"'
-
-    - name: Upload for closed discussions
-      uses: actions/upload-artifact@v3
-      with:
-        name: discussions-closed
-        path: ./issue_metrics.md

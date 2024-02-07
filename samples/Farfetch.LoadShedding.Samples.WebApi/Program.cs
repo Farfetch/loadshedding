@@ -1,14 +1,13 @@
 using Farfetch.LoadShedding;
+using Farfetch.LoadShedding.Samples.WebApi;
 using MongoDB.Driver;
 using Prometheus;
-using Samples.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 
@@ -31,7 +30,6 @@ builder.Services.AddLoadShedding((provider, options) =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 builder.Services.AddSingleton(_ => MongoUrl.Create(builder.Configuration["MongoConnectionString"]));
 
@@ -73,7 +71,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
     var summaries = new[]
     {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching",
     };
 
     var forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -81,7 +79,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
         Id = Guid.NewGuid(),
         Date = DateTime.Now.AddDays(index),
         TemperatureC = Random.Shared.Next(-20, 55),
-        Summary = summaries[Random.Shared.Next(summaries.Length)]
+        Summary = summaries[Random.Shared.Next(summaries.Length)],
     });
 
     collection.InsertMany(forecasts);

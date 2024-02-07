@@ -23,7 +23,7 @@ namespace Farfetch.LoadShedding.Tests.Configurations
                 Timeout.Infinite,
                 events.Object);
 
-            var rtpMeasures  = new RTTMeasures(2);
+            var rtpMeasures = new RTTMeasures(2);
 
             // Act
             var target = new ConcurrencyContext(taskManager, rtpMeasures);

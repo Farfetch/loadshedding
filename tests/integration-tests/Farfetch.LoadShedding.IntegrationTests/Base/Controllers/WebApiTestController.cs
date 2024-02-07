@@ -23,8 +23,8 @@ namespace Farfetch.LoadShedding.IntegrationTests.Base.Controllers
                 {
                     Id = 1,
                     Age = 18,
-                    UserName = "john.doe"
-                }
+                    UserName = "john.doe",
+                },
             });
         }
     }

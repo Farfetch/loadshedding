@@ -1,4 +1,4 @@
-namespace Samples.WebApi
+namespace Farfetch.LoadShedding.Samples.WebApi
 {
     public class WeatherForecast
     {

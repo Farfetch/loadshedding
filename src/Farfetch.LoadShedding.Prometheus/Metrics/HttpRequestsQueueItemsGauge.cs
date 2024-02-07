@@ -14,6 +14,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
         {
         }
 
+        /// <inheritdoc/>
         protected override string DefaultName => "http_requests_queue_items_total";
 
         public void Set(string method, string priority, double value)
@@ -23,6 +24,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
                 .Set(value);
         }
 
+        /// <inheritdoc/>
         protected override Gauge Create(CollectorRegistry registry, MetricOptions options)
         {
             return PrometheusBase
@@ -33,8 +35,8 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
                     LabelNames = new[]
                     {
                         MetricsConstants.MethodLabel,
-                        MetricsConstants.PriorityLabel
-                    }
+                        MetricsConstants.PriorityLabel,
+                    },
                 });
         }
     }

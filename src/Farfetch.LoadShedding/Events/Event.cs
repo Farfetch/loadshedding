@@ -1,9 +1,9 @@
-﻿namespace Farfetch.LoadShedding
-{
-    using Farfetch.LoadShedding.Events;
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using Farfetch.LoadShedding.Events;
 
+namespace Farfetch.LoadShedding
+{
     internal class Event<TArg> : IEvent<TArg>
     {
         private readonly List<Action<TArg>> _handlers = new List<Action<TArg>>();

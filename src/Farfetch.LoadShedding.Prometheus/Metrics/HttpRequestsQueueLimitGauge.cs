@@ -14,6 +14,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
         {
         }
 
+        /// <inheritdoc/>
         protected override string DefaultName => "http_requests_queue_limit_total";
 
         public void Set(double value)
@@ -21,6 +22,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
             this.Metric?.Set(value);
         }
 
+        /// <inheritdoc/>
         protected override Gauge Create(CollectorRegistry registry, MetricOptions options)
         {
             return PrometheusBase

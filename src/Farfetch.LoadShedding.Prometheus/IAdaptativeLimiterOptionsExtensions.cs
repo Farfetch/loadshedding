@@ -1,11 +1,11 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Configurators;
+﻿using System;
+using Farfetch.LoadShedding.AspNetCore.Configurators;
 using Farfetch.LoadShedding.Prometheus;
 using Farfetch.LoadShedding.Prometheus.Metrics;
 using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
-using System;
 
 namespace Farfetch.LoadShedding
 {
@@ -18,7 +18,7 @@ namespace Farfetch.LoadShedding
         /// Extension method to include prometheus metrics.
         /// </summary>
         /// <param name="options">The LoadSheddingOptions instance.</param>
-        /// <param name="registry">The Prometheus registry collector.</param>
+        /// <param name="optionsDelegate"></param>
         /// <returns>LoadSheddingOptions</returns>
         public static LoadSheddingOptions AddMetrics(
             this LoadSheddingOptions options,

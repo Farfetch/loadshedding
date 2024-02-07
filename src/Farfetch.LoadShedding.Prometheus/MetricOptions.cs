@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Farfetch.LoadShedding.Prometheus
+﻿namespace Farfetch.LoadShedding.Prometheus
 {
     public class MetricOptions
     {

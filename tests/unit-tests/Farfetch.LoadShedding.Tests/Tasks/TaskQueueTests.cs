@@ -7,6 +7,9 @@ namespace Farfetch.LoadShedding.Tests.Tasks
     {
         private readonly TaskQueue _target;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaskQueueTests"/> class.
+        /// </summary>
         public TaskQueueTests()
         {
             this._target = new TaskQueue(int.MaxValue);

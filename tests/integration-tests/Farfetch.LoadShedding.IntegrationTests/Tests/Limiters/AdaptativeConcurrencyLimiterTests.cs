@@ -22,12 +22,19 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
 
         private int _numberOfRejectedRequests;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdaptativeConcurrencyLimiterTests"/> class.
+        /// </summary>
         public AdaptativeConcurrencyLimiterTests()
         {
             this._numberOfRejectedRequests = 0;
             this._collectorRegistry = new CollectorRegistry();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task GetAsync_WithReducedLimitAndQueueSize_SomeRequestsAreRejected()
         {
@@ -39,7 +46,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
                 QueueTimeoutInMs = 2,
                 InitialConcurrencyLimit = InitialConcurrencyLimit,
                 InitialQueueSize = InitialQueueSize,
-                MinQueueSize = InitialQueueSize
+                MinQueueSize = InitialQueueSize,
             };
 
             var client = this.GetClient(options);
@@ -57,6 +64,10 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             await AssertMetrics(client);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task GetAsync_WithHighLimitAndQueueSize_NoneRequestsIsRejected()
         {
@@ -67,7 +78,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             {
                 InitialConcurrencyLimit = InitialConcurrencyLimit,
                 InitialQueueSize = InitialQueueSize,
-                MinQueueSize = InitialQueueSize
+                MinQueueSize = InitialQueueSize,
             };
 
             var client = this.GetClient(options);
@@ -84,6 +95,12 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Equal(ExpectedRejectedRequests, results.Count(x => x.StatusCode == HttpStatusCode.ServiceUnavailable));
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="headerValue"></param>
+        /// <param name="priority"></param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Theory]
         [InlineData("critical", Priority.Critical)]
         [InlineData("normal", Priority.Normal)]
@@ -99,7 +116,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
                 MinConcurrencyLimit = 1,
                 MaxConcurrencyLimit = 2,
                 InitialQueueSize = int.MaxValue,
-                MinQueueSize = int.MaxValue
+                MinQueueSize = int.MaxValue,
             };
 
             var client = this.GetClient(options, x => x.UseHeaderPriorityResolver());
@@ -118,6 +135,11 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.True(_enqueuedItems.All(x => x == priority));
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="headerValue"></param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Theory]
         [InlineData("critical")]
         [InlineData("normal")]
@@ -133,7 +155,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
                 MinConcurrencyLimit = 1,
                 MaxConcurrencyLimit = 2,
                 InitialQueueSize = int.MaxValue,
-                MinQueueSize = int.MaxValue
+                MinQueueSize = int.MaxValue,
             };
 
             var client = this.GetClient(options, x => x.UseEndpointPriorityResolver());
@@ -152,6 +174,10 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.True(_enqueuedItems.All(x => x == Priority.Critical));
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task GetAsync_WithListener_TheEventValuesAreCorrect()
         {
@@ -163,7 +189,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
                 InitialConcurrencyLimit = InitialConcurrencyLimit,
                 MinConcurrencyLimit = InitialConcurrencyLimit,
                 InitialQueueSize = InitialQueueSize,
-                MinQueueSize = MinQueueSize
+                MinQueueSize = MinQueueSize,
             };
 
             var client = this.GetClient(options);
@@ -181,6 +207,10 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Contains(this._queueLimits, x => x == InitialQueueSize);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task GetMetrics_WithDisableMetrics_ShouldNotExportDisableMetrics()
         {

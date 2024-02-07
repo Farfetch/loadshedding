@@ -14,6 +14,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
         {
         }
 
+        /// <inheritdoc/>
         protected override string DefaultName => "http_requests_rejected_total";
 
         public void Increment(string method, string priority, string reason)
@@ -21,6 +22,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
             this.Metric?.WithLabels(method, priority, reason).Inc();
         }
 
+        /// <inheritdoc/>
         protected override Counter Create(CollectorRegistry registry, MetricOptions options)
         {
             return PrometheusBase.Metrics
@@ -31,8 +33,8 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
                     {
                         MetricsConstants.MethodLabel,
                         MetricsConstants.PriorityLabel,
-                        MetricsConstants.ReasonLabel
-                    }
+                        MetricsConstants.ReasonLabel,
+                    },
                 });
         }
     }
