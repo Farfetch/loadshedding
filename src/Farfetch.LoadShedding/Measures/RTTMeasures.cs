@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -52,6 +52,8 @@ namespace Farfetch.LoadShedding.Measures
         /// </summary>
         public long MinRTT { get; private set; } = int.MaxValue;
 
+        private bool IsRecovered => (this.MinRTT * this._tolerance) > this.AvgRTT;
+
         /// <summary>
         /// Responsible for tracking specific data to determine performance degradation.
         /// In each request: the round trip time is accumulated; the number of requests is increased; the average round trip time is calculated;
@@ -86,8 +88,6 @@ namespace Farfetch.LoadShedding.Measures
                 this.Reset();
             }
         }
-
-        private bool IsRecovered => (this.MinRTT * this._tolerance) > this.AvgRTT;
 
         private void Reset()
         {
