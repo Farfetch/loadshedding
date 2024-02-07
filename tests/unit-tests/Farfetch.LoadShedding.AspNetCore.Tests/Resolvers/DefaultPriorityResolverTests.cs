@@ -11,12 +11,19 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Resolvers
         private readonly Mock<HttpContext> _contextMock;
         private readonly DefaultPriorityResolver _target;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultPriorityResolverTests"/> class.
+        /// </summary>
         public DefaultPriorityResolverTests()
         {
             this._contextMock = new Mock<HttpContext>();
             this._target = new DefaultPriorityResolver();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task ResolveAsync_WithDefaultPriority_ReturnsNormal()
         {
@@ -27,6 +34,10 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Resolvers
             Assert.Equal(Priority.Normal, result);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task ResolveAsync_WithDefaultPriorityMultipleTimes_AlwaysReturnNormal()
         {

@@ -1,7 +1,7 @@
-﻿using Farfetch.LoadShedding.Tasks;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Farfetch.LoadShedding.Tasks;
 
 namespace Farfetch.LoadShedding.Limiters
 {

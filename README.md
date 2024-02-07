@@ -1,4 +1,4 @@
-# LoadShedding &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/farfetch/loadshedding/blob/main/LICENSE) [![nuget version](https://img.shields.io/nuget/v/loadshedding.svg?style=flat)](https://www.nuget.org/packages/LoadShedding/) ![Build Master](https://github.com/Farfetch/loadshedding/workflows/Build/badge.svg?branch=master)
+# LoadShedding &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/farfetch/loadshedding/blob/main/LICENSE) [![nuget version](https://img.shields.io/nuget/v/loadshedding.svg?style=flat)](https://www.nuget.org/packages/Farfetch.LoadShedding/) ![Build Master](https://github.com/Farfetch/loadshedding/workflows/Build/badge.svg?branch=main)
 
 ## Introduction
 
@@ -26,8 +26,7 @@ Read our [contributing guidelines](CONTRIBUTING.md) to learn about our developme
 
 You can find us at:
 
--   [GitHub Issues](https://github.com/Farfetch/loadshedding/issues)
--   [GitHub Discussions](https://github.com/Farfetch/loadshedding/discussions)
+- [GitHub Issues](https://github.com/Farfetch/loadshedding/issues)
 
 ## License
 

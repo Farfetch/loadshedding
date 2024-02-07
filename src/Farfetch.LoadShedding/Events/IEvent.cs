@@ -1,8 +1,8 @@
-﻿namespace Farfetch.LoadShedding
-{
-    using Farfetch.LoadShedding.Events;
-    using System;
+﻿using System;
+using Farfetch.LoadShedding.Events;
 
+namespace Farfetch.LoadShedding
+{
     /// <summary>
     /// Represents an Event to be subscribed.
     /// </summary>

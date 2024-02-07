@@ -1,8 +1,8 @@
 ﻿using System;
 using Farfetch.LoadShedding.Calculators;
 using Farfetch.LoadShedding.Configurations;
-using Farfetch.LoadShedding.Limiters;
 using Farfetch.LoadShedding.Events;
+using Farfetch.LoadShedding.Limiters;
 
 namespace Farfetch.LoadShedding.Builders
 {
@@ -18,6 +18,7 @@ namespace Farfetch.LoadShedding.Builders
         private ConcurrencyOptions _options;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AdaptativeLimiterBuilder"/> class.
         /// Constructor that creates ConcurrencyOptions, MetricsManager, LimitCalculator, and QueueSizeCalculator properties by default.
         /// </summary>
         public AdaptativeLimiterBuilder()

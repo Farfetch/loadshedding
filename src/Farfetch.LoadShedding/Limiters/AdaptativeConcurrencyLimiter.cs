@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.Calculators;
 using Farfetch.LoadShedding.Configurations;
-using Farfetch.LoadShedding.Measures;
 using Farfetch.LoadShedding.Events;
+using Farfetch.LoadShedding.Measures;
 using Farfetch.LoadShedding.Tasks;
 
 namespace Farfetch.LoadShedding.Limiters

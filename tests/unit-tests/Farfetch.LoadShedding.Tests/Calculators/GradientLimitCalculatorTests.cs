@@ -9,6 +9,9 @@ namespace Farfetch.LoadShedding.Tests.Calculators
     {
         private readonly Mock<IConcurrencyContext> _concurrencyContextMock;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GradientLimitCalculatorTests"/> class.
+        /// </summary>
         public GradientLimitCalculatorTests()
         {
             this._concurrencyContextMock = new Mock<IConcurrencyContext>();
@@ -62,7 +65,7 @@ namespace Farfetch.LoadShedding.Tests.Calculators
             var target = new GradientLimitCalculator(new ConcurrencyOptions
             {
                 Tolerance = tolerance,
-                MinConcurrencyLimit = minConcurrencyLimit
+                MinConcurrencyLimit = minConcurrencyLimit,
             });
 
             // Act

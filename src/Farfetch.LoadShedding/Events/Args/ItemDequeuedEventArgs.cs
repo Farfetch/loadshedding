@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Farfetch.LoadShedding.Tasks;
 
 namespace Farfetch.LoadShedding.Events.Args
@@ -17,12 +17,18 @@ namespace Farfetch.LoadShedding.Events.Args
         }
 
         /// <summary>
-        /// The time waiting in the queue.
+        /// Gets the time waiting in the queue.
         /// </summary>
         public TimeSpan QueueTime { get; }
 
+        /// <summary>
+        /// Gets the maximum number of items in the queue.
+        /// </summary>
         public int QueueLimit { get; }
 
+        /// <summary>
+        /// Gets the current number of items in the queue.
+        /// </summary>
         public int QueueCount { get; }
     }
 }

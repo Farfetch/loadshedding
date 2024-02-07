@@ -1,4 +1,4 @@
-﻿using Farfetch.LoadShedding.Tasks;
+using Farfetch.LoadShedding.Tasks;
 
 namespace Farfetch.LoadShedding.Events.Args
 {
@@ -14,8 +14,14 @@ namespace Farfetch.LoadShedding.Events.Args
             this.QueueCount = queueCount;
         }
 
+        /// <summary>
+        /// Gets the maximum number of items in the queue.
+        /// </summary>
         public int QueueLimit { get; }
 
+        /// <summary>
+        /// Gets the current number of items in the queue.
+        /// </summary>
         public int QueueCount { get; }
     }
 }

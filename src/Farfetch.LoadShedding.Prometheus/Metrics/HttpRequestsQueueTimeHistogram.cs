@@ -14,6 +14,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
         {
         }
 
+        /// <inheritdoc/>
         protected override string DefaultName => "http_requests_queue_time_seconds";
 
         public void Observe(string method, string priority, double value)
@@ -23,6 +24,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
                 .Observe(value);
         }
 
+        /// <inheritdoc/>
         protected override Histogram Create(CollectorRegistry registry, MetricOptions options)
         {
             return PrometheusBase
@@ -31,7 +33,7 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
                 .CreateHistogram(options.Name, Description, new PrometheusBase.HistogramConfiguration
                 {
                     LabelNames = new[] { MetricsConstants.MethodLabel, MetricsConstants.PriorityLabel },
-                    Buckets = Histogram.ExponentialBuckets(0.0005, 2, 20)
+                    Buckets = Histogram.ExponentialBuckets(0.0005, 2, 20),
                 });
         }
     }

@@ -12,7 +12,8 @@ namespace Farfetch.LoadShedding.BenchmarkTests
     [MemoryDiagnoser]
     [ThreadingDiagnoser]
     [Orderer(SummaryOrderPolicy.Declared)]
-    [MinColumn, MaxColumn]
+    [MinColumn]
+    [MaxColumn]
     [IterationCount(10)]
     [RankColumn]
     public class AdaptativeLimiterBenchmarks

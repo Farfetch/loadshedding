@@ -1,8 +1,8 @@
-﻿using Farfetch.LoadShedding.AspNetCore.Options;
+﻿using System;
+using System.Collections.Generic;
+using Farfetch.LoadShedding.AspNetCore.Options;
 using Farfetch.LoadShedding.Calculators;
 using Farfetch.LoadShedding.Events;
-using System;
-using System.Collections.Generic;
 
 namespace Farfetch.LoadShedding.AspNetCore.Configurators
 {

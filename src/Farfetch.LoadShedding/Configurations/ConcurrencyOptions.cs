@@ -1,5 +1,5 @@
-﻿using Farfetch.LoadShedding.Exceptions;
-using System.Threading;
+﻿using System.Threading;
+using Farfetch.LoadShedding.Exceptions;
 
 namespace Farfetch.LoadShedding.Configurations
 {

@@ -7,6 +7,6 @@
     {
         Critical = 0,
         Normal = 1,
-        NonCritical = 2
+        NonCritical = 2,
     }
 }

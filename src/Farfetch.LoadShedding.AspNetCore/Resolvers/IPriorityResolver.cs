@@ -1,6 +1,6 @@
-﻿using Farfetch.LoadShedding.Tasks;
+﻿using System.Threading.Tasks;
+using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 
 namespace Farfetch.LoadShedding.AspNetCore.Resolvers
 {

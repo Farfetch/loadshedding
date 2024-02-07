@@ -1,4 +1,4 @@
-﻿namespace Farfetch.LoadShedding.Events.Args
+namespace Farfetch.LoadShedding.Events.Args
 {
     /// <summary>
     /// Events args for limits changed event.
@@ -11,7 +11,7 @@
         }
 
         /// <summary>
-        /// The current limit.
+        /// Gets the current limit.
         /// </summary>
         public int Limit { get; }
     }

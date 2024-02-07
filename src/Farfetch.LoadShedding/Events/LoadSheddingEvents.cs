@@ -19,37 +19,37 @@ namespace Farfetch.LoadShedding.Events
         }
 
         /// <summary>
-        /// Event triggered when the concurrency limit is changed.
+        /// Gets or sets event triggered when the concurrency limit is changed.
         /// </summary>
         public IEvent<LimitChangedEventArgs> ConcurrencyLimitChanged { get; set; }
 
         /// <summary>
-        /// Event triggered when the queue limit is changed.
+        /// Gets or sets event triggered when the queue limit is changed.
         /// </summary>
         public IEvent<LimitChangedEventArgs> QueueLimitChanged { get; set; }
 
         /// <summary>
-        /// Event triggered when some task has been started to process.
+        /// Gets or sets event triggered when some task has been started to process.
         /// </summary>
         public IEvent<ItemProcessingEventArgs> ItemProcessing { get; set; }
 
         /// <summary>
-        /// Event triggered when some task has been finished.
+        /// Gets or sets event triggered when some task has been finished.
         /// </summary>
         public IEvent<ItemProcessedEventArgs> ItemProcessed { get; set; }
 
         /// <summary>
-        /// Event triggered when some task has been enqueued.
+        /// Gets or sets event triggered when some task has been enqueued.
         /// </summary>
         public IEvent<ItemEnqueuedEventArgs> ItemEnqueued { get; set; }
 
         /// <summary>
-        /// Event triggered when some task has been dequeued.
+        /// Gets or sets event triggered when some task has been dequeued.
         /// </summary>
         public IEvent<ItemDequeuedEventArgs> ItemDequeued { get; set; }
 
         /// <summary>
-        /// Event triggered when some task has been rejected.
+        /// Gets or sets event triggered when some task has been rejected.
         /// </summary>
         public IEvent<ItemRejectedEventArgs> Rejected { get; set; }
     }
