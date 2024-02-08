@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <Description>Provides Prometheus integration for monitoring and metrics collection within LoadShedding applications</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,6 +12,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Farfetch.LoadShedding.AspNetCore\Farfetch.LoadShedding.AspNetCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

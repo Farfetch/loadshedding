@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Description>Provides seamless integration of LoadShedding capabilities into ASP.NET Core applications</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +14,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Farfetch.LoadShedding\Farfetch.LoadShedding.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
