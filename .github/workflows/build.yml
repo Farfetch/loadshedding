@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  build:
 
     runs-on: ubuntu-latest
     env:

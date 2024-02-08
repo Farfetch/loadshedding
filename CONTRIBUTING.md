@@ -36,12 +36,14 @@ Here are a few things you can do that will increase the likelihood of your pull 
 [Act](https://github.com/nektos/act) is a tool that will use docker to build and test workflows locally.
 
 #### 1. Act setup
+
 - Follow the [instructions](https://github.com/nektos/act?tab=readme-ov-file#installation) to install act
 - To check all available actions: `act -l`
 
 #### 2. Run tests
+
 - To run the default (push) event: `act`
-- To run a specific job: `act -j build-test`
+- To run a specific job: `act -j build`
 
 Alternatively, you can run unit and integration tests with the following commands:
 
