@@ -2,14 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <PackageId>LoadShedding</PackageId>
     <Description>LoadShedding main package</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
