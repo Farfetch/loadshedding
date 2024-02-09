@@ -1,4 +1,4 @@
-# LoadShedding &middot; [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/farfetch/loadshedding/blob/main/LICENSE) [![NuGet](https://img.shields.io/nuget/v/farfetch.loadshedding.svg?style=flat)](https://www.nuget.org/packages/Farfetch.LoadShedding/) ![Build](https://github.com/Farfetch/loadshedding/workflows/Build/badge.svg?branch=main)
+# LoadShedding &middot; [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/farfetch/loadshedding/blob/main/LICENSE) [![NuGet](https://img.shields.io/nuget/v/farfetch.loadshedding.svg?style=flat)](https://www.nuget.org/packages/Farfetch.LoadShedding/) ![Build](https://github.com/Farfetch/loadshedding/actions/workflows/build.yml/badge.svg?branch=main)
 
 ## Introduction
 
