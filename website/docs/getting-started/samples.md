@@ -10,7 +10,7 @@ We know that working code is a valuable learning tool for many, so here you can 
 
 This is a simple sample that shows how LoadShedding is implemented.
 
-You can find the code here: [/samples/Samples.WebApi](https://github.com/Farfetch/loadshedding/tree/master/samples/Samples.WebApi)
+You can find the code here: [/samples/Samples.WebApi](https://github.com/Farfetch/loadshedding/tree/main/samples/Farfetch.LoadShedding.Samples.WebApi)
 
 To run this sample with docker environment please follow the following steps:
 
