@@ -12,7 +12,7 @@ namespace Farfetch.LoadShedding
     /// <summary>
     /// Extension methods of IAdaptativeLimiterOptions
     /// </summary>
-    public static class IAdaptativeLimiterOptionsExtensions
+    public static class LoadSheddingOptionsExtensions
     {
         /// <summary>
         /// Extension method to include prometheus metrics.
@@ -43,7 +43,7 @@ namespace Farfetch.LoadShedding
                 events.SubscribeConcurrencyLimitChangedEvent(concurrencyLimitGauge);
                 events.SubscribeQueueLimitChangedEvent(queueLimitGauge);
                 events.SubscribeItemProcessingEvent(concurrencyItemsGauge, accessor);
-                events.SubscribeItemProcessedEvent(concurrencyItemsGauge, taskProcessingTimeHistogram, accessor);
+                events.SubscribeItemProcessedEvent(queueItemsGauge, queueTimeHistogram, concurrencyItemsGauge, taskProcessingTimeHistogram, accessor);
                 events.SubscribeItemEnqueuedEvent(queueItemsGauge, accessor);
                 events.SubscribeItemDequeuedEvent(queueItemsGauge, queueTimeHistogram, accessor);
                 events.SubscribeRejectedEvent(rejectedCounter, accessor);
@@ -74,11 +74,16 @@ namespace Farfetch.LoadShedding
 
         private static void SubscribeItemProcessedEvent(
             this Events.ILoadSheddingEvents events,
+            HttpRequestsQueueItemsGauge queueItemsGauge,
+            HttpRequestsQueueTimeHistogram queueTimeHistogram,
             HttpRequestsConcurrencyItemsGauge concurrencyItemsGauge,
             HttpRequestsQueueTaskExecutionTimeHistogram taskProcessingTimeHistogram,
             IHttpContextAccessor accessor)
         {
-            if (!concurrencyItemsGauge.IsEnabled && !taskProcessingTimeHistogram.IsEnabled)
+            if (!queueItemsGauge.IsEnabled &&
+                !queueTimeHistogram.IsEnabled &&
+                !concurrencyItemsGauge.IsEnabled &&
+                !taskProcessingTimeHistogram.IsEnabled)
             {
                 return;
             }
@@ -87,6 +92,12 @@ namespace Farfetch.LoadShedding
             {
                 var method = accessor.GetMethod();
                 var priority = args.Priority.FormatPriority();
+
+                if (args.WaitingTime == TimeSpan.Zero)
+                {
+                    queueItemsGauge.Set(method, priority, args.QueueCount);
+                    queueTimeHistogram.Observe(method, priority, args.WaitingTime.TotalSeconds);
+                }
 
                 concurrencyItemsGauge.Set(method, priority, args.ConcurrencyCount);
                 taskProcessingTimeHistogram.Observe(method, priority, args.ProcessingTime.TotalSeconds);

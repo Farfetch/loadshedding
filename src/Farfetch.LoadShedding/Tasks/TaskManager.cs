@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.Constants;
@@ -155,18 +155,20 @@ namespace Farfetch.LoadShedding.Tasks
                 item.Priority,
                 reason));
 
-        private void NotifyItemProcessed(TaskItem item, int count)
+        private void NotifyItemProcessed(TaskItem item, int concurrencyCount)
             => this._events?.ItemProcessed?.Raise(new ItemProcessedEventArgs(
                 item.Priority,
                 item.ProcessingTime,
+                item.WaitingTime,
                 this.ConcurrencyLimit,
-                count));
+                concurrencyCount,
+                this.QueueCount));
 
-        private void NotifyItemProcessing(TaskItem item, int count)
+        private void NotifyItemProcessing(TaskItem item, int concurrencyCount)
             => this._events?.ItemProcessing?.Raise(new ItemProcessingEventArgs(
                 item.Priority,
                 this.ConcurrencyLimit,
-                count));
+                concurrencyCount));
 
         private void NotifyConcurrencyLimitChanged()
             => this._events?.ConcurrencyLimitChanged?.Raise(new LimitChangedEventArgs(this._counter.Limit));
