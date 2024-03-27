@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -7,16 +6,11 @@ using System.Runtime.CompilerServices;
 
 namespace Farfetch.LoadShedding.Tasks
 {
-    internal class TaskQueue
+    internal class TaskQueue : IReadOnlyCounter
     {
         private readonly ConcurrentCounter _counter = new();
 
-        private readonly IDictionary<Priority, TaskItemList> _queues = new SortedDictionary<Priority, TaskItemList>()
-        {
-            [Priority.Critical] = new TaskItemList(),
-            [Priority.Normal] = new TaskItemList(),
-            [Priority.NonCritical] = new TaskItemList(),
-        };
+        private readonly TaskItemList[] _queues = new TaskItemList[3] { new(), new(), new() };
 
         public TaskQueue(int limit)
         {
@@ -31,9 +25,9 @@ namespace Farfetch.LoadShedding.Tasks
             set => this._counter.Limit = value;
         }
 
-        public Action<int, TaskItem> OnItemEnqueued { get; set; }
+        public Action<TaskItem> OnItemEnqueued { get; set; }
 
-        public Action<int, TaskItem> OnItemDequeued { get; set; }
+        public Action<TaskItem> OnItemDequeued { get; set; }
 
         public void Enqueue(TaskItem item)
         {
@@ -48,9 +42,8 @@ namespace Farfetch.LoadShedding.Tasks
         public TaskItem Dequeue()
         {
             var nextQueueItem = this._queues
-                .FirstOrDefault(x => x.Value.HasItems)
-                .Value?
-                .Dequeue();
+                .FirstOrDefault(x => x.HasItems)
+                ?.Dequeue();
 
             if (nextQueueItem != null)
             {
@@ -62,7 +55,7 @@ namespace Farfetch.LoadShedding.Tasks
 
         public void Remove(TaskItem item)
         {
-            if (this._queues[item.Priority].Remove(item))
+            if (this._queues[(int)item.Priority].Remove(item))
             {
                 this.DecrementCounter(item);
             }
@@ -72,13 +65,13 @@ namespace Farfetch.LoadShedding.Tasks
         {
             foreach (var queue in this._queues)
             {
-                queue.Value.Clear();
+                queue.Clear();
             }
         }
 
         private int EnqueueItem(TaskItem item)
         {
-            this._queues[item.Priority].Add(item);
+            this._queues[(int)item.Priority].Add(item);
 
             return IncrementCounter(item);
         }
@@ -86,9 +79,8 @@ namespace Farfetch.LoadShedding.Tasks
         private void RejectLastItem()
         {
             var lastItem = this._queues
-                .LastOrDefault(x => x.Value.HasItems)
-                .Value?
-                .DequeueLast();
+                .LastOrDefault(x => x.HasItems)
+                ?.DequeueLast();
 
             if (lastItem == null)
             {
@@ -103,7 +95,7 @@ namespace Farfetch.LoadShedding.Tasks
         private int IncrementCounter(TaskItem item)
         {
             var count = this._counter.Increment();
-            this.OnItemEnqueued?.Invoke(count, item);
+            this.OnItemEnqueued?.Invoke(item);
 
             return count;
         }
@@ -111,7 +103,7 @@ namespace Farfetch.LoadShedding.Tasks
         private int DecrementCounter(TaskItem nextQueueItem)
         {
             var count = this._counter.Decrement();
-            this.OnItemDequeued?.Invoke(count, nextQueueItem);
+            this.OnItemDequeued?.Invoke(nextQueueItem);
 
             return count;
         }

@@ -6,17 +6,17 @@ namespace Farfetch.LoadShedding.Tasks
     public enum Priority
     {
         /// <summary>
-        /// Priority as critical.
+        /// Priority as Critical.
         /// </summary>
         Critical = 0,
 
         /// <summary>
-        /// Priority as normal.
+        /// Priority as Normal.
         /// </summary>
         Normal = 1,
 
         /// <summary>
-        /// Priority as critical.
+        /// Priority as Non Critical.
         /// </summary>
         NonCritical = 2,
     }

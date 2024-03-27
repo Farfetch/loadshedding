@@ -1,8 +1,8 @@
 namespace Farfetch.LoadShedding.Tasks
 {
-    internal class ConcurrentCounter
+    internal class ConcurrentCounter : IReadOnlyCounter
     {
-        private readonly object _locker = new object();
+        private readonly object _locker = new();
 
         private int _count = 0;
 
