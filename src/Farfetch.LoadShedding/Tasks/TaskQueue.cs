@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,7 +9,7 @@ namespace Farfetch.LoadShedding.Tasks
 {
     internal class TaskQueue
     {
-        private readonly ConcurrentCounter _counter = new ConcurrentCounter();
+        private readonly ConcurrentCounter _counter = new();
 
         private readonly IDictionary<Priority, TaskItemList> _queues = new SortedDictionary<Priority, TaskItemList>()
         {
@@ -80,11 +80,7 @@ namespace Farfetch.LoadShedding.Tasks
         {
             this._queues[item.Priority].Add(item);
 
-            var count = this._counter.Increment();
-
-            this.OnItemEnqueued?.Invoke(count, item);
-
-            return count;
+            return IncrementCounter(item);
         }
 
         private void RejectLastItem()
@@ -99,16 +95,25 @@ namespace Farfetch.LoadShedding.Tasks
                 return;
             }
 
-            this._counter.Decrement();
-
             this.DecrementCounter(lastItem);
 
             lastItem.Reject();
         }
 
-        private void DecrementCounter(TaskItem nextQueueItem)
+        private int IncrementCounter(TaskItem item)
         {
-            this.OnItemDequeued?.Invoke(this._counter.Decrement(), nextQueueItem);
+            var count = this._counter.Increment();
+            this.OnItemEnqueued?.Invoke(count, item);
+
+            return count;
+        }
+
+        private int DecrementCounter(TaskItem nextQueueItem)
+        {
+            var count = this._counter.Decrement();
+            this.OnItemDequeued?.Invoke(count, nextQueueItem);
+
+            return count;
         }
     }
 }
