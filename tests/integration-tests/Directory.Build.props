@@ -1,0 +1,7 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+
+    <ItemGroup>
+        <Compile Include="$(MSBuildProjectDirectory)/../Traits.cs" Link="Properties/Traits.cs"/>
+    </ItemGroup>
+</Project>
