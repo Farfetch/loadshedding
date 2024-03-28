@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 using Farfetch.LoadShedding.Tasks;
 
@@ -13,11 +13,11 @@ namespace Farfetch.LoadShedding.BenchmarkTests
     [RankColumn]
     public class TaskQueueBenchmarks
     {
-        private readonly TaskQueue _queue = new TaskQueue(int.MaxValue);
+        private readonly TaskQueue _queue = new(int.MaxValue);
 
-        private readonly TaskQueue _emptyQueue = new TaskQueue(int.MaxValue);
+        private readonly TaskQueue _emptyQueue = new(int.MaxValue);
 
-        private readonly TaskQueue _limitedQueue = new TaskQueue(1000);
+        private readonly TaskQueue _limitedQueue = new(1000);
 
         [IterationSetup]
         public void Initialize()
@@ -38,7 +38,7 @@ namespace Farfetch.LoadShedding.BenchmarkTests
         }
 
         [Benchmark]
-        public void TaskQueueWith1000Items_EnqueueFixedPriority() => this._queue.Enqueue(new TaskItem(0));
+        public void TaskQueueWith1000Items_EnqueueFixedPriority() => this._queue.Enqueue(new TaskItem(Priority.Critical));
 
         [Benchmark]
         public void TaskQueueEmpty_EnqueueRandomPriority() => this._emptyQueue.Enqueue(GetTaskRandomPriority());
@@ -50,7 +50,7 @@ namespace Farfetch.LoadShedding.BenchmarkTests
         public void TaskQueueWith1000Items_Dequeue() => this._queue.Dequeue();
 
         [Benchmark]
-        public void TaskQueue_EnqueueNewItem_LimitReached() => this._limitedQueue.Enqueue(new TaskItem(0));
+        public void TaskQueue_EnqueueNewItem_LimitReached() => this._limitedQueue.Enqueue(new TaskItem(Priority.Critical));
 
         private static TaskItem GetTaskRandomPriority()
         {

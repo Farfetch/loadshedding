@@ -17,8 +17,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="$(MSBuildProjectDirectory)/../Traits.cs" />
-  </ItemGroup>
-
 </Project>

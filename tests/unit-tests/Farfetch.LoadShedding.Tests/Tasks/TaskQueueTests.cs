@@ -19,7 +19,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
         public void Enqueue_QueueLimitNotReached_AddToQueue()
         {
             // Arrange
-            var task = new TaskItem(0);
+            var task = new TaskItem(Priority.Critical);
 
             // Act
             this._target.Enqueue(task);
@@ -35,8 +35,8 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             // Arrange
             this._target.Limit = 1;
 
-            var firstTask = new TaskItem(0);
-            var lastTask = new TaskItem(0);
+            var firstTask = new TaskItem(Priority.Critical);
+            var lastTask = new TaskItem(Priority.Critical);
 
             this._target.Enqueue(firstTask);
 
@@ -57,7 +57,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             var lowPriorityTask = new TaskItem(Priority.NonCritical);
             this._target.Enqueue(lowPriorityTask);
 
-            var highPriorityTask = new TaskItem(0);
+            var highPriorityTask = new TaskItem(Priority.Critical);
 
             // Act
             this._target.Enqueue(highPriorityTask);
