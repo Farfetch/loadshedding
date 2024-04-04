@@ -243,13 +243,12 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             var processingItems = new List<ItemProcessingEventArgs>();
 
             var events = new LoadSheddingEvents();
-
             events.ItemProcessed.Subscribe(args => processedItems.Add(args));
             events.ItemProcessing.Subscribe(args => processingItems.Add(args));
 
             var target = new TaskManager(10, 10, Timeout.Infinite, events);
 
-            var item = await target.AcquireAsync(0);
+            var item = await target.AcquireAsync(Priority.Critical);
 
             // Act
             item.Complete();
@@ -257,7 +256,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             // Assert
             Assert.Single(processingItems);
             Assert.Equal(item.Priority, processingItems.First().Priority);
-            Assert.Equal(1, processingItems.First().ConcurrencyCount);
+            Assert.Equal(0, processingItems.First().ConcurrencyCount);
             Assert.Equal(10, processingItems.First().ConcurrencyLimit);
 
             Assert.Single(processedItems);

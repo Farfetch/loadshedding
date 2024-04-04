@@ -9,7 +9,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
         public async Task WaitAsync_Process_ReturnsProcessingStatus()
         {
             // Arrange
-            var taskItem = new TaskItem(0);
+            var taskItem = new TaskItem(Priority.Critical);
 
             var waitingTask = taskItem.WaitAsync(10000, CancellationToken.None);
 
@@ -26,7 +26,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
         public async Task WaitAsync_TimeoutReached_ReturnsCanceledStatus()
         {
             // Arrange
-            var taskItem = new TaskItem(0);
+            var taskItem = new TaskItem(Priority.Critical);
 
             var waitingTask = taskItem.WaitAsync(1, CancellationToken.None);
 
@@ -43,7 +43,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
         public async Task WaitAsync_CancelledToken_ReturnsCanceledStatus()
         {
             // Arrange
-            var taskItem = new TaskItem(0);
+            var taskItem = new TaskItem(Priority.Critical);
 
             using var source = new CancellationTokenSource();
 
@@ -62,7 +62,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
         public async Task WaitAsync_Reject_ReturnsProcessingStatus()
         {
             // Arrange
-            var taskItem = new TaskItem(0);
+            var taskItem = new TaskItem(Priority.Critical);
 
             var waitingTask = taskItem.WaitAsync(10000, CancellationToken.None);
 
