@@ -12,7 +12,7 @@ namespace Farfetch.LoadShedding.Tasks
     {
         private readonly TaskQueue _taskQueue;
 
-        private readonly ConcurrentCounter _counter = new ConcurrentCounter();
+        private readonly ConcurrentCounter _counter = new();
 
         private readonly int _queueTimeout;
         private readonly ILoadSheddingEvents _events;
@@ -82,11 +82,11 @@ namespace Farfetch.LoadShedding.Tasks
         {
             var item = this.CreateTask(priority);
 
-            if (this._counter.TryIncrement(out var currentCount))
+            if (this._counter.TryIncrement(out var _))
             {
                 item.Process();
 
-                this.NotifyItemProcessing(item, currentCount);
+                this.NotifyItemProcessing(item);
 
                 return item;
             }
@@ -123,7 +123,8 @@ namespace Farfetch.LoadShedding.Tasks
                     break;
             }
 
-            this.NotifyItemProcessing(item, this._counter.Increment());
+            this._counter.Increment();
+            this.NotifyItemProcessing(item);
 
             return item;
         }
@@ -135,10 +136,9 @@ namespace Farfetch.LoadShedding.Tasks
             item.OnCompleted = () =>
             {
                 var count = this._counter.Decrement();
-
                 var processNext = count < this._counter.Limit;
 
-                this.NotifyItemProcessed(item, count);
+                this.NotifyItemProcessed(item);
 
                 if (processNext)
                 {
@@ -154,32 +154,28 @@ namespace Farfetch.LoadShedding.Tasks
                 item.Priority,
                 reason));
 
-        private void NotifyItemProcessed(TaskItem item, int count)
+        private void NotifyItemProcessed(TaskItem item)
             => this._events?.ItemProcessed?.Raise(new ItemProcessedEventArgs(
                 item.Priority,
                 item.ProcessingTime,
-                this.ConcurrencyLimit,
-                count));
+                this._counter));
 
-        private void NotifyItemProcessing(TaskItem item, int count)
+        private void NotifyItemProcessing(TaskItem item)
             => this._events?.ItemProcessing?.Raise(new ItemProcessingEventArgs(
                 item.Priority,
-                this.ConcurrencyLimit,
-                count));
+                this._counter));
 
         private void NotifyConcurrencyLimitChanged()
             => this._events?.ConcurrencyLimitChanged?.Raise(new LimitChangedEventArgs(this._counter.Limit));
 
-        private void NotifyItemDequeued(int count, TaskItem item) => this._events?.ItemDequeued?.Raise(new ItemDequeuedEventArgs(
+        private void NotifyItemDequeued(TaskItem item) => this._events?.ItemDequeued?.Raise(new ItemDequeuedEventArgs(
              item.Priority,
              item.WaitingTime,
-             this._taskQueue.Limit,
-             count));
+             this._taskQueue));
 
-        private void NotifyItemEnqueued(int count, TaskItem item) => this._events?.ItemEnqueued?.Raise(new ItemEnqueuedEventArgs(
+        private void NotifyItemEnqueued(TaskItem item) => this._events?.ItemEnqueued?.Raise(new ItemEnqueuedEventArgs(
             item.Priority,
-            this._taskQueue.Limit,
-            count));
+            this._taskQueue));
 
         private void ProcessPendingTasks()
         {

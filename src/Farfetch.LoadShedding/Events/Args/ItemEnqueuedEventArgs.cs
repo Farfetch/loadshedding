@@ -5,23 +5,11 @@ namespace Farfetch.LoadShedding.Events.Args
     /// <summary>
     /// Event args for the task enqueued event.
     /// </summary>
-    public class ItemEnqueuedEventArgs : ItemEventArgs
+    public class ItemEnqueuedEventArgs : TaskQueueEventArgs
     {
-        internal ItemEnqueuedEventArgs(Priority priority, int queueLimit, int queueCount)
-            : base(priority)
+        internal ItemEnqueuedEventArgs(Priority priority, IReadOnlyCounter queueCounter)
+            : base(priority, queueCounter)
         {
-            this.QueueLimit = queueLimit;
-            this.QueueCount = queueCount;
         }
-
-        /// <summary>
-        /// Gets the maximum number of items in the queue.
-        /// </summary>
-        public int QueueLimit { get; }
-
-        /// <summary>
-        /// Gets the current number of items in the queue.
-        /// </summary>
-        public int QueueCount { get; }
     }
 }
