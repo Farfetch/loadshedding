@@ -36,6 +36,44 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
+        public async Task GetAsync_WithReducedLimitAndQueueSizeAndMultiplePriorities_SomeRequestsAreRejected()
+        {
+            // Arrange
+            const int InitialConcurrencyLimit = 100, InitialQueueSize = 4, MinSuccessfulRequests = 44;
+
+            var options = new ConcurrencyOptions
+            {
+                QueueTimeoutInMs = 2,
+                InitialConcurrencyLimit = InitialConcurrencyLimit,
+                InitialQueueSize = InitialQueueSize,
+                MinQueueSize = InitialQueueSize,
+            };
+
+            var client = this.GetClient(options, x => x.UseHeaderPriorityResolver());
+
+            // Act
+            var tasks = Enumerable
+                .Range(0, 160)
+                .Select(i => Task.Run(() =>
+                {
+                    var message = new HttpRequestMessage(i % 3 == 0 ? HttpMethod.Delete : HttpMethod.Get, "/api/people");
+                    message.Headers.Add("X-Priority", i % 2 == 0 ? "critical" : "normal");
+                    return client.SendAsync(message);
+                }));
+
+            var results = await Task.WhenAll(tasks.ToArray());
+
+            // Assert
+            Assert.True(results.Count(x => x.IsSuccessStatusCode) >= MinSuccessfulRequests);
+            Assert.Contains(results, x => x.StatusCode == HttpStatusCode.ServiceUnavailable);
+            await AssertMetrics(client, labels: new[] { ("GET", "normal"), ("GET", "critical"), ("DELETE", "normal"), ("DELETE", "critical") }, hadQueueItems: true, hadRejectedItems: true);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Fact]
         public async Task GetAsync_WithReducedLimitAndQueueSize_SomeRequestsAreRejected()
         {
             // Arrange

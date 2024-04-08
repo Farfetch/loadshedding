@@ -48,43 +48,41 @@ namespace Farfetch.LoadShedding.Limiters
         /// It is responsible for managing the adaptative semaphore for the current request.
         /// As soon as the request is executed, the data is collected to determine the performance degradation.
         /// </summary>
-        public Task ExecuteAsync(Func<Task> function, CancellationToken cancellationToken = default)
+        public Task ExecuteAsync(Func<Task> function, string method = null, CancellationToken cancellationToken = default)
         {
-            return this.ExecuteAsync(Priority.Normal, function, cancellationToken);
+            return this.ExecuteAsync(Priority.Normal, function, method, cancellationToken);
         }
 
         /// <summary>
         /// It is responsible for managing the adaptative semaphore for the current request.
         /// As soon as the request is executed, the data is collected to determine the performance degradation.
         /// </summary>
-        public async Task ExecuteAsync(Priority priority, Func<Task> function, CancellationToken cancellationToken = default)
+        public async Task ExecuteAsync(Priority priority, Func<Task> function, string method = null, CancellationToken cancellationToken = default)
         {
-            using (var item = await _taskManager.AcquireAsync(priority, cancellationToken))
+            using var item = await _taskManager.AcquireAsync(priority, method, cancellationToken);
+            try
             {
-                try
+                var delayTask = Task.Delay(Timeout.Infinite, cancellationToken);
+
+                var resultTask = await Task.WhenAny(
+                     function.Invoke(),
+                     delayTask);
+
+                if (delayTask == resultTask)
                 {
-                    var delayTask = Task.Delay(Timeout.Infinite, cancellationToken);
-
-                    var resultTask = await Task.WhenAny(
-                         function.Invoke(),
-                         delayTask);
-
-                    if (delayTask == resultTask)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
 
                     if (resultTask.IsFaulted && resultTask.Exception is not null)
                     {
                         throw resultTask.Exception;
                     }
-                }
-                finally
-                {
-                    item.Complete();
+            }
+            finally
+            {
+                item.Complete();
 
-                    this._measures.AddSample(item.ProcessingTime.TotalMilliseconds);
-                }
+                this._measures.AddSample(item.ProcessingTime.TotalMilliseconds);
             }
         }
 

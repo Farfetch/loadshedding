@@ -31,6 +31,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
             this._headers = new HeaderDictionary();
 
             this._requestMock.Setup(x => x.Headers).Returns(() => this._headers);
+            this._requestMock.Setup(x => x.Method).Returns(HttpMethod.Get.Method);
 
             this._contextMock.SetupGet(x => x.Request).Returns(() => this._requestMock.Object);
             this._contextMock.SetupGet(x => x.Response).Returns(() => this._responseMock.Object);
@@ -48,7 +49,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
             const string headerName = "X-Priority-Test";
 
             this._concurrencyLimiterMock
-                .Setup(x => x.ExecuteAsync(It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.ExecuteAsync(It.IsAny<Func<Task>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.CompletedTask);
 
             this._requestDelegateMock
@@ -68,7 +69,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
             await target.InvokeAsync(this._contextMock.Object);
 
             // Assert
-            this._concurrencyLimiterMock.Verify(x => x.ExecuteAsync(priority, It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()));
+            this._concurrencyLimiterMock.Verify(x => x.ExecuteAsync(priority, It.IsAny<Func<Task>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()));
             this._responseMock.VerifySet(x => x.StatusCode = It.IsAny<int>(), Times.Never);
         }
 
@@ -77,7 +78,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
         {
             // Arrange
             this._concurrencyLimiterMock
-                .Setup(x => x.ExecuteAsync(It.IsAny<Priority>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.ExecuteAsync(It.IsAny<Priority>(), It.IsAny<Func<Task>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.CompletedTask);
 
             this._requestDelegateMock
@@ -93,7 +94,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
             await target.InvokeAsync(this._contextMock.Object);
 
             // Assert
-            this._concurrencyLimiterMock.Verify(x => x.ExecuteAsync(Priority.Normal, It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()));
+            this._concurrencyLimiterMock.Verify(x => x.ExecuteAsync(Priority.Normal, It.IsAny<Func<Task>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()));
             this._responseMock.VerifySet(x => x.StatusCode = It.IsAny<int>(), Times.Never);
         }
 
@@ -102,7 +103,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
         {
             // Arrange
             this._concurrencyLimiterMock
-                .Setup(x => x.ExecuteAsync(It.IsAny<Priority>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.ExecuteAsync(It.IsAny<Priority>(), It.IsAny<Func<Task>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Throws(new LimitReachedException("Exception"));
 
             var target = new AdaptativeConcurrencyLimiterMiddleware(
