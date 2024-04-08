@@ -15,9 +15,9 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
 {
     public class AdaptativeConcurrencyLimiterTests
     {
-        private readonly ConcurrentBag<int> _queueLimits = new ConcurrentBag<int>();
-        private readonly ConcurrentBag<int> _concurrencyLimits = new ConcurrentBag<int>();
-        private readonly ConcurrentBag<Priority> _enqueuedItems = new ConcurrentBag<Priority>();
+        private readonly ConcurrentBag<int> _queueLimits = new();
+        private readonly ConcurrentBag<int> _concurrencyLimits = new();
+        private readonly ConcurrentBag<Priority> _enqueuedItems = new();
         private readonly CollectorRegistry _collectorRegistry;
 
         private int _numberOfRejectedRequests;
@@ -61,7 +61,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             // Assert
             Assert.True(results.Count(x => x.IsSuccessStatusCode) >= MinSuccessfulRequests);
             Assert.Contains(results, x => x.StatusCode == HttpStatusCode.ServiceUnavailable);
-            await AssertMetrics(client, Priority.Normal);
+            await AssertMetrics(client, priority: "normal", hadQueueItems: true, hadRejectedItems: true);
         }
 
         [Fact]
@@ -128,6 +128,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             // Assert
             Assert.Equal(ExpectedSuccessfulRequests, results.Count(x => x.IsSuccessStatusCode));
             Assert.Equal(ExpectedRejectedRequests, results.Count(x => x.StatusCode == HttpStatusCode.ServiceUnavailable));
+            await AssertMetrics(client, priority: "normal", hadQueueItems: false, hadRejectedItems: false);
         }
 
         [Theory]
@@ -162,6 +163,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             // Assert
             Assert.NotEmpty(_enqueuedItems);
             Assert.True(_enqueuedItems.All(x => x == priority));
+            await AssertMetrics(client, priority.FormatPriority(), hadQueueItems: false, hadRejectedItems: false);
         }
 
         [Theory]
@@ -196,6 +198,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             // Assert
             Assert.NotEmpty(_enqueuedItems);
             Assert.True(_enqueuedItems.All(x => x == Priority.Critical));
+            await AssertMetrics(client, "critical", hadQueueItems: false, hadRejectedItems: false);
         }
 
         /// <summary>
@@ -229,6 +232,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Equal(_numberOfRejectedRequests, results.Count(x => x.StatusCode == HttpStatusCode.ServiceUnavailable));
             Assert.Contains(this._concurrencyLimits, x => x == InitialConcurrencyLimit);
             Assert.Contains(this._queueLimits, x => x == InitialQueueSize);
+            await AssertMetrics(client, "normal", hadQueueItems: false, hadRejectedItems: false);
         }
 
         /// <summary>
@@ -315,7 +319,12 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             return testServer.CreateClient();
         }
 
-        private static async Task AssertMetrics(HttpClient client, params Priority[] priorities)
+        private static Task AssertMetrics(HttpClient client, string priority, bool hadQueueItems, bool hadRejectedItems)
+        {
+            return AssertMetrics(client, new[] { ("GET", priority) }, hadQueueItems, hadRejectedItems);
+        }
+
+        private static async Task AssertMetrics(HttpClient client, (string method, string priority)[] labels, bool hadQueueItems, bool hadRejectedItems)
         {
             var metrics = await client.GetAsync("/monitoring/metrics");
 
@@ -326,24 +335,49 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
 
             var content = metrics.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            Assert.Contains("http_requests_concurrency_items_total", content);
-            Assert.Contains("http_requests_concurrency_limit_total", content);
-            Assert.Contains("http_requests_task_processing_time_seconds", content);
-            Assert.Contains("http_requests_queue_limit_total", content);
-
-            foreach(var priority in priorities)
+            // Assert Concurrency
+            Assert.Contains("TYPE http_requests_concurrency_items_total gauge", content);
+            Assert.Contains("TYPE http_requests_concurrency_limit_total gauge", content);
+            foreach (var (method, priority) in labels)
             {
-                var priorityText = priority.ToString().ToLower();
-                Assert.Contains($"http_requests_queue_items_total{{method=\"GET\",priority=\"{priorityText}\"}}", content);
-                Assert.Contains($"http_requests_queue_time_seconds_sum{{method=\"GET\",priority=\"{priorityText}\"}}", content);
-                Assert.Contains($"http_requests_queue_time_seconds_count{{method=\"GET\",priority=\"{priorityText}\"}}", content);
-                Assert.Contains($"http_requests_queue_time_seconds_bucket{{method=\"GET\",priority=\"{priorityText}\",le=\"0.0005\"}}", content);
+                Assert.Contains($"http_requests_concurrency_items_total{{method=\"{method}\",priority=\"{priority}\"}} 0", content);
             }
 
-            var lowPriority = priorities.Max();
+            Assert.Contains("http_requests_concurrency_limit_total", content);
 
-            Assert.Contains($"http_requests_rejected_total{{method=\"GET\",priority=\"{lowPriority.ToString().ToLower()}\",reason=\"max_queue_items\"}}", content);
-            Assert.DoesNotContain($"http_requests_rejected_total{{method=\"UNKNOWN\",priority=\"{lowPriority.ToString().ToLower()}\",reason=\"max_queue_items\"}}", content);
+            // Assert Processing
+            Assert.Contains("TYPE http_requests_task_processing_time_seconds histogram", content);
+            foreach (var (method, priority) in labels)
+            {
+                Assert.Contains($"http_requests_task_processing_time_seconds_sum{{method=\"{method}\",priority=\"{priority}\"}}", content);
+                Assert.Contains($"http_requests_task_processing_time_seconds_count{{method=\"{method}\",priority=\"{priority}\"}}", content);
+                Assert.Contains($"http_requests_task_processing_time_seconds_bucket{{method=\"{method}\",priority=\"{priority}\",le=\"+Inf\"}}", content);
+            }
+
+            // Assert Queue
+            Assert.Contains("TYPE http_requests_queue_items_total gauge", content);
+            Assert.Contains("TYPE http_requests_queue_time_seconds histogram", content);
+            if (hadQueueItems)
+            {
+                Assert.Contains("http_requests_queue_limit_total", content);
+                foreach (var (method, priority) in labels)
+                {
+                    Assert.Contains($"http_requests_queue_items_total{{method=\"{method}\",priority=\"{priority}\"}} 0", content);
+                    Assert.Contains($"http_requests_queue_time_seconds_sum{{method=\"{method}\",priority=\"{priority}\"}}", content);
+                    Assert.Contains($"http_requests_queue_time_seconds_count{{method=\"{method}\",priority=\"{priority}\"}}", content);
+                    Assert.Contains($"http_requests_queue_time_seconds_bucket{{method=\"{method}\",priority=\"{priority}\",le=\"+Inf\"}}", content);
+                }
+            }
+
+            // Assert Rejection
+            Assert.Contains("TYPE http_requests_rejected_total counter", content);
+            if (hadRejectedItems)
+            {
+                foreach (var (method, priority) in labels)
+                {
+                    Assert.Contains($"http_requests_rejected_total{{method=\"{method}\",priority=\"{priority}\",reason=\"max_queue_items\"}}", content);
+                }
+            }
         }
     }
 }
