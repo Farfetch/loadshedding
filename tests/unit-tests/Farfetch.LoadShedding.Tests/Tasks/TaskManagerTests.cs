@@ -136,7 +136,7 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             }
 
             // Act
-            var exception = await Assert.ThrowsAsync<OperationCanceledException>(() => target.AcquireAsync(DefaultPriority, "GET", cancellationToken.Token));
+            var exception = await Assert.ThrowsAsync<OperationCanceledException>(() => target.AcquireAsync(DefaultPriority, cancellationToken.Token));
 
             // Assert
             Assert.NotNull(exception);

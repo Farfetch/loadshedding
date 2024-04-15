@@ -8,14 +8,15 @@ namespace Farfetch.LoadShedding.Events.Args
     /// </summary>
     public class ItemDequeuedEventArgs : TaskQueueEventArgs
     {
-        internal ItemDequeuedEventArgs(ITaskItem taskItem, IReadOnlyCounter queueCounter)
-            : base(taskItem, queueCounter)
+        internal ItemDequeuedEventArgs(Priority priority, TimeSpan queueTime, IReadOnlyCounter queueCounter)
+            : base(priority, queueCounter)
         {
+            this.QueueTime = queueTime;
         }
 
         /// <summary>
         /// Gets the time waiting in the queue.
         /// </summary>
-        public TimeSpan QueueTime => TaskItem.WaitingTime;
+        public TimeSpan QueueTime { get; }
     }
 }

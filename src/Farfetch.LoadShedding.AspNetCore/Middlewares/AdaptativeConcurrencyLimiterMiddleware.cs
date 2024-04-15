@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.AspNetCore.Resolvers;
 using Farfetch.LoadShedding.Exceptions;
@@ -35,7 +35,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Middlewares
                     .ConfigureAwait(false);
 
                 await this._limiter
-                    .ExecuteAsync(priority, () => this._next.Invoke(context), context.Request.Method.ToUpperInvariant(), context.RequestAborted)
+                    .ExecuteAsync(priority, () => this._next.Invoke(context), context.RequestAborted)
                     .ConfigureAwait(false);
             }
             catch (LimitReachedException)

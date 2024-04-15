@@ -7,8 +7,8 @@ namespace Farfetch.LoadShedding.Events.Args
     /// </summary>
     public class ItemEnqueuedEventArgs : TaskQueueEventArgs
     {
-        internal ItemEnqueuedEventArgs(ITaskItem taskItem, IReadOnlyCounter queueCounter)
-            : base(taskItem, queueCounter)
+        internal ItemEnqueuedEventArgs(Priority priority, IReadOnlyCounter queueCounter)
+            : base(priority, queueCounter)
         {
         }
     }

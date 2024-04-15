@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Farfetch.LoadShedding.Tasks
@@ -15,6 +15,6 @@ namespace Farfetch.LoadShedding.Tasks
 
         double UsagePercentage { get; }
 
-        Task<TaskItem> AcquireAsync(Priority priority, string method = null, CancellationToken cancellationToken = default);
+        Task<TaskItem> AcquireAsync(Priority priority, CancellationToken cancellationToken = default);
     }
 }

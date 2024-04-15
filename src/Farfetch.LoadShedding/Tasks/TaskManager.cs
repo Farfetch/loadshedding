@@ -78,9 +78,9 @@ namespace Farfetch.LoadShedding.Tasks
 
         public double UsagePercentage => this._counter.UsagePercentage;
 
-        public async Task<TaskItem> AcquireAsync(Priority priority, string method = null, CancellationToken cancellationToken = default)
+        public async Task<TaskItem> AcquireAsync(Priority priority, CancellationToken cancellationToken = default)
         {
-            var item = this.CreateTask(priority, method);
+            var item = this.CreateTask(priority);
 
             if (this._counter.TryIncrement(out var _))
             {
@@ -129,9 +129,9 @@ namespace Farfetch.LoadShedding.Tasks
             return item;
         }
 
-        private TaskItem CreateTask(Priority priority, string method = null)
+        private TaskItem CreateTask(Priority priority)
         {
-            var item = new TaskItem(priority, method);
+            var item = new TaskItem(priority);
 
             item.OnCompleted = () =>
             {
@@ -151,28 +151,30 @@ namespace Farfetch.LoadShedding.Tasks
 
         private void NotifyItemRejected(TaskItem item, string reason)
             => this._events?.Rejected?.Raise(new ItemRejectedEventArgs(
-                item,
+                item.Priority,
                 reason));
 
         private void NotifyItemProcessed(TaskItem item)
             => this._events?.ItemProcessed?.Raise(new ItemProcessedEventArgs(
-                item,
+                item.Priority,
+                item.ProcessingTime,
                 this._counter));
 
         private void NotifyItemProcessing(TaskItem item)
             => this._events?.ItemProcessing?.Raise(new ItemProcessingEventArgs(
-                item,
+                item.Priority,
                 this._counter));
 
         private void NotifyConcurrencyLimitChanged()
             => this._events?.ConcurrencyLimitChanged?.Raise(new LimitChangedEventArgs(this._counter.Limit));
 
         private void NotifyItemDequeued(TaskItem item) => this._events?.ItemDequeued?.Raise(new ItemDequeuedEventArgs(
-            item,
-            this._taskQueue));
+             item.Priority,
+             item.WaitingTime,
+             this._taskQueue));
 
         private void NotifyItemEnqueued(TaskItem item) => this._events?.ItemEnqueued?.Raise(new ItemEnqueuedEventArgs(
-            item,
+            item.Priority,
             this._taskQueue));
 
         private void ProcessPendingTasks()

@@ -5,24 +5,21 @@ using System.Threading.Tasks;
 
 namespace Farfetch.LoadShedding.Tasks
 {
-    internal class TaskItem : ITaskItem, IDisposable
+    internal class TaskItem : IDisposable
     {
         private readonly TaskCompletionSource<bool> _taskSource;
         private readonly Stopwatch _lifetime;
 
         private Stopwatch _waitingTime;
 
-        public TaskItem(Priority priority, string method = null)
+        public TaskItem(Priority priority)
         {
-            this.Method = method;
             this.Priority = priority;
             this._lifetime = Stopwatch.StartNew();
             this._taskSource = new TaskCompletionSource<bool>();
         }
 
-        public string Method { get; }
-
-        public Priority Priority { get; }
+        public Priority Priority { get; private set; }
 
         public TaskResult Status { get; private set; } = TaskResult.Pending;
 

@@ -1,9 +1,10 @@
 using System;
 using Farfetch.LoadShedding.AspNetCore.Configurators;
-using Farfetch.LoadShedding.Events.Args;
 using Farfetch.LoadShedding.Prometheus;
 using Farfetch.LoadShedding.Prometheus.Metrics;
 using Farfetch.LoadShedding.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 
 namespace Farfetch.LoadShedding
@@ -37,13 +38,15 @@ namespace Farfetch.LoadShedding
                 var queueTimeHistogram = new HttpRequestsQueueTimeHistogram(metricsOptions.Registry, metricsOptions.QueueTime);
                 var rejectedCounter = new HttpRequestsRejectedCounter(metricsOptions.Registry, metricsOptions.RequestRejected);
 
+                var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+
                 events.SubscribeConcurrencyLimitChangedEvent(concurrencyLimitGauge);
                 events.SubscribeQueueLimitChangedEvent(queueLimitGauge);
-                events.SubscribeItemProcessingEvent(concurrencyItemsGauge);
-                events.SubscribeItemProcessedEvent(concurrencyItemsGauge, taskProcessingTimeHistogram);
-                events.SubscribeItemEnqueuedEvent(queueItemsGauge);
-                events.SubscribeItemDequeuedEvent(queueItemsGauge, queueTimeHistogram);
-                events.SubscribeRejectedEvent(rejectedCounter);
+                events.SubscribeItemProcessingEvent(concurrencyItemsGauge, accessor);
+                events.SubscribeItemProcessedEvent(concurrencyItemsGauge, taskProcessingTimeHistogram, accessor);
+                events.SubscribeItemEnqueuedEvent(queueItemsGauge, accessor);
+                events.SubscribeItemDequeuedEvent(queueItemsGauge, queueTimeHistogram, accessor);
+                events.SubscribeRejectedEvent(rejectedCounter, accessor);
             });
 
             return options;
@@ -52,7 +55,8 @@ namespace Farfetch.LoadShedding
         private static void SubscribeItemDequeuedEvent(
             this Events.ILoadSheddingEvents events,
             HttpRequestsQueueItemsGauge queueItemsGauge,
-            HttpRequestsQueueTimeHistogram queueTimeHistogram)
+            HttpRequestsQueueTimeHistogram queueTimeHistogram,
+            IHttpContextAccessor accessor)
         {
             if (!queueItemsGauge.IsEnabled && !queueTimeHistogram.IsEnabled)
             {
@@ -61,7 +65,7 @@ namespace Farfetch.LoadShedding
 
             events.ItemDequeued.Subscribe(args =>
             {
-                var method = args.GetMethod();
+                var method = accessor.GetMethod();
 
                 queueItemsGauge.Decrement(method, args.Priority.FormatPriority());
                 queueTimeHistogram.Observe(method, args.Priority.FormatPriority(), args.QueueTime.TotalSeconds);
@@ -71,7 +75,8 @@ namespace Farfetch.LoadShedding
         private static void SubscribeItemProcessedEvent(
             this Events.ILoadSheddingEvents events,
             HttpRequestsConcurrencyItemsGauge concurrencyItemsGauge,
-            HttpRequestsQueueTaskExecutionTimeHistogram taskProcessingTimeHistogram)
+            HttpRequestsQueueTaskExecutionTimeHistogram taskProcessingTimeHistogram,
+            IHttpContextAccessor accessor)
         {
             if (!concurrencyItemsGauge.IsEnabled && !taskProcessingTimeHistogram.IsEnabled)
             {
@@ -80,7 +85,7 @@ namespace Farfetch.LoadShedding
 
             events.ItemProcessed.Subscribe(args =>
             {
-                var method = args.GetMethod();
+                var method = accessor.GetMethod();
                 var priority = args.Priority.FormatPriority();
 
                 concurrencyItemsGauge.Decrement(method, priority);
@@ -108,7 +113,8 @@ namespace Farfetch.LoadShedding
 
         private static void SubscribeItemProcessingEvent(
             this Events.ILoadSheddingEvents events,
-            HttpRequestsConcurrencyItemsGauge concurrencyItemsGauge)
+            HttpRequestsConcurrencyItemsGauge concurrencyItemsGauge,
+            IHttpContextAccessor accessor)
         {
             if (!concurrencyItemsGauge.IsEnabled)
             {
@@ -118,12 +124,12 @@ namespace Farfetch.LoadShedding
             events.ItemProcessing.Subscribe(args =>
             {
                 concurrencyItemsGauge.Increment(
-                    args.GetMethod(),
+                    accessor.GetMethod(),
                     args.Priority.FormatPriority());
             });
         }
 
-        private static void SubscribeItemEnqueuedEvent(this Events.ILoadSheddingEvents events, HttpRequestsQueueItemsGauge queueItemsGauge)
+        private static void SubscribeItemEnqueuedEvent(this Events.ILoadSheddingEvents events, HttpRequestsQueueItemsGauge queueItemsGauge, IHttpContextAccessor accessor)
         {
             if (!queueItemsGauge.IsEnabled)
             {
@@ -133,12 +139,12 @@ namespace Farfetch.LoadShedding
             events.ItemEnqueued.Subscribe(args =>
             {
                 queueItemsGauge.Increment(
-                    args.GetMethod(),
+                    accessor.GetMethod(),
                     args.Priority.FormatPriority());
             });
         }
 
-        private static void SubscribeRejectedEvent(this Events.ILoadSheddingEvents events, HttpRequestsRejectedCounter rejectedCounter)
+        private static void SubscribeRejectedEvent(this Events.ILoadSheddingEvents events, HttpRequestsRejectedCounter rejectedCounter, IHttpContextAccessor accessor)
         {
             if (!rejectedCounter.IsEnabled)
             {
@@ -148,20 +154,25 @@ namespace Farfetch.LoadShedding
             events.Rejected.Subscribe(args =>
             {
                 rejectedCounter.Increment(
-                    args.GetMethod(),
+                    accessor.GetMethod(),
                     args.Priority.FormatPriority(),
                     args.Reason);
             });
         }
 
-        private static string GetMethod(this ItemEventArgs args)
+        private static string GetMethod(this IHttpContextAccessor accessor)
         {
-            if (string.IsNullOrEmpty(args.Method))
+            if (accessor?.HttpContext?.Request is null)
             {
                 return MetricsConstants.Unknown;
             }
 
-            return args.Method.ToUpperInvariant();
+            return accessor.HttpContext.Request.Method.ToUpper();
+        }
+
+        private static string FormatPriority(this Priority priority)
+        {
+            return priority.ToString().ToLower();
         }
     }
 }
