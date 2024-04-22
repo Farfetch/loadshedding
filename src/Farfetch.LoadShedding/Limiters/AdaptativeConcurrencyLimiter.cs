@@ -73,6 +73,11 @@ namespace Farfetch.LoadShedding.Limiters
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                     }
+
+                    if (resultTask.IsFaulted && resultTask.Exception is not null)
+                    {
+                        throw resultTask.Exception;
+                    }
                 }
                 finally
                 {
