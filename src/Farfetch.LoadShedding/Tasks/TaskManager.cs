@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Farfetch.LoadShedding.Constants;
@@ -28,11 +28,7 @@ namespace Farfetch.LoadShedding.Tasks
 
             this._events = events;
 
-            this._taskQueue = new TaskQueue(maxQueueSize)
-            {
-                OnItemEnqueued = (count, item) => this.NotifyItemEnqueued(count, item),
-                OnItemDequeued = (count, item) => this.NotifyItemDequeued(count, item),
-            };
+            this._taskQueue = new TaskQueue(maxQueueSize);
 
             this._events?.ConcurrencyLimitChanged?.Raise(new LimitChangedEventArgs(this._counter.Limit));
             this._events?.QueueLimitChanged?.Raise(new LimitChangedEventArgs(maxQueueSize));
@@ -101,6 +97,8 @@ namespace Farfetch.LoadShedding.Tasks
             {
                 try
                 {
+                    this.NotifyItemEnqueued(this._taskQueue.Count, item);
+
                     await item
                         .WaitAsync(this._queueTimeout, cancellationToken)
                         .ConfigureAwait(false);
@@ -108,6 +106,7 @@ namespace Farfetch.LoadShedding.Tasks
                 finally
                 {
                     this._taskQueue.Remove(item);
+                    this.NotifyItemDequeued(this._taskQueue.Count, item);
                 }
             }
 

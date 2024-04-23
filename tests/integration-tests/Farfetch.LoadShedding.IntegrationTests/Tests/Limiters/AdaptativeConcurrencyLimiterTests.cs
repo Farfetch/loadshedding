@@ -53,7 +53,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
 
             // Act
             var tasks = Enumerable
-                .Range(0, 160)
+                .Range(0, 1000)
                 .Select(_ => Task.Run(() => client.GetAsync("/api/people")));
 
             var results = await Task.WhenAll(tasks.ToArray());
@@ -61,7 +61,42 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             // Assert
             Assert.True(results.Count(x => x.IsSuccessStatusCode) >= MinSuccessfulRequests);
             Assert.Contains(results, x => x.StatusCode == HttpStatusCode.ServiceUnavailable);
-            await AssertMetrics(client);
+            await AssertMetrics(client, Priority.Normal);
+        }
+
+        [Fact]
+        public async Task GetAsync_WithReducedLimitAndQueueSizeAndMultiplePriorities_SomeRequestsAreRejected()
+        {
+            // Arrange
+            const int InitialConcurrencyLimit = 100, InitialQueueSize = 4, MinSuccessfulRequests = 44;
+
+            var options = new ConcurrencyOptions
+            {
+                QueueTimeoutInMs = 2,
+                InitialConcurrencyLimit = InitialConcurrencyLimit,
+                InitialQueueSize = InitialQueueSize,
+                MinQueueSize = InitialQueueSize,
+            };
+
+            var client = this.GetClient(options, x => x.UseHeaderPriorityResolver());
+
+            // Act
+            var tasks = Enumerable
+                .Range(0, 1000)
+                .Select(i => Task.Run(() =>
+                {
+                    var message = new HttpRequestMessage(HttpMethod.Get, "/api/people");
+                    message.Headers.Add("X-Priority", ((Priority)(i % 3)).ToString().ToLower());
+                    return client.SendAsync(message);
+                }));
+
+            var results = await Task.WhenAll(tasks.ToArray());
+
+            // Assert
+            Assert.True(results.Count(x => x.IsSuccessStatusCode) >= MinSuccessfulRequests);
+            Assert.Contains(results, x => x.StatusCode == HttpStatusCode.ServiceUnavailable);
+
+            await AssertMetrics(client, Priority.Critical, Priority.Normal, Priority.NonCritical);
         }
 
         /// <summary>
@@ -95,12 +130,6 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Equal(ExpectedRejectedRequests, results.Count(x => x.StatusCode == HttpStatusCode.ServiceUnavailable));
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="headerValue"></param>
-        /// <param name="priority"></param>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Theory]
         [InlineData("critical", Priority.Critical)]
         [InlineData("normal", Priority.Normal)]
@@ -135,11 +164,6 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.True(_enqueuedItems.All(x => x == priority));
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="headerValue"></param>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Theory]
         [InlineData("critical")]
         [InlineData("normal")]
@@ -234,7 +258,9 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.NotNull(metrics.Content);
             Assert.Equal("text/plain", metrics.Content?.Headers?.ContentType?.MediaType);
 
-            var content = metrics.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+            Assert.NotNull(metrics.Content);
+
+            var content = await metrics.Content.ReadAsStringAsync();
 
             Assert.DoesNotContain("http_requests_concurrency_limit_total", content);
             Assert.DoesNotContain("http_requests_queue_limit_total", content);
@@ -289,7 +315,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             return testServer.CreateClient();
         }
 
-        private static async Task AssertMetrics(HttpClient client)
+        private static async Task AssertMetrics(HttpClient client, params Priority[] priorities)
         {
             var metrics = await client.GetAsync("/monitoring/metrics");
 
@@ -303,12 +329,21 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Contains("http_requests_concurrency_items_total", content);
             Assert.Contains("http_requests_concurrency_limit_total", content);
             Assert.Contains("http_requests_task_processing_time_seconds", content);
-            Assert.Contains("http_requests_queue_items_total{method=\"GET\",priority=\"normal\"}", content);
             Assert.Contains("http_requests_queue_limit_total", content);
-            Assert.Contains("http_requests_queue_time_seconds_sum{method=\"GET\",priority=\"normal\"}", content);
-            Assert.Contains("http_requests_queue_time_seconds_count{method=\"GET\",priority=\"normal\"}", content);
-            Assert.Contains("http_requests_queue_time_seconds_bucket{method=\"GET\",priority=\"normal\",le=\"0.0005\"}", content);
-            Assert.Contains("http_requests_rejected_total{method=\"GET\",priority=\"normal\",reason=\"max_queue_items\"}", content);
+
+            foreach(var priority in priorities)
+            {
+                var priorityText = priority.ToString().ToLower();
+                Assert.Contains($"http_requests_queue_items_total{{method=\"GET\",priority=\"{priorityText}\"}}", content);
+                Assert.Contains($"http_requests_queue_time_seconds_sum{{method=\"GET\",priority=\"{priorityText}\"}}", content);
+                Assert.Contains($"http_requests_queue_time_seconds_count{{method=\"GET\",priority=\"{priorityText}\"}}", content);
+                Assert.Contains($"http_requests_queue_time_seconds_bucket{{method=\"GET\",priority=\"{priorityText}\",le=\"0.0005\"}}", content);
+            }
+
+            var lowPriority = priorities.Max();
+
+            Assert.Contains($"http_requests_rejected_total{{method=\"GET\",priority=\"{lowPriority.ToString().ToLower()}\",reason=\"max_queue_items\"}}", content);
+            Assert.DoesNotContain($"http_requests_rejected_total{{method=\"UNKNOWN\",priority=\"{lowPriority.ToString().ToLower()}\",reason=\"max_queue_items\"}}", content);
         }
     }
 }
