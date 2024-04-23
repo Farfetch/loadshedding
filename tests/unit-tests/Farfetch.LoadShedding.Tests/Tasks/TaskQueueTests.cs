@@ -67,5 +67,25 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             Assert.Equal(TaskResult.Pending, highPriorityTask.Status);
             Assert.Equal(TaskResult.Rejected, lowPriorityTask.Status);
         }
+
+        [Fact]
+        public void Remove_ItemAlreadyRejected_ShouldNotDecrementCounter()
+        {
+            // Arrange
+            this._target.Limit = 2;
+
+            var lastTask = new TaskItem(Priority.NonCritical);
+
+            this._target.Enqueue(new TaskItem(Priority.Critical));
+            this._target.Enqueue(new TaskItem(Priority.Critical));
+            this._target.Enqueue(lastTask);
+
+            // Act
+            this._target.Remove(lastTask);
+
+            // Assert
+            Assert.Equal(2, _target.Count);
+            Assert.Equal(TaskResult.Rejected, lastTask.Status);
+        }
     }
 }

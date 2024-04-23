@@ -1,4 +1,4 @@
-﻿namespace Farfetch.LoadShedding.Tasks
+namespace Farfetch.LoadShedding.Tasks
 {
     internal class ConcurrentCounter
     {

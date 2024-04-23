@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,7 +9,7 @@ namespace Farfetch.LoadShedding.Tasks
 {
     internal class TaskQueue
     {
-        private readonly ConcurrentCounter _counter = new ConcurrentCounter();
+        private readonly ConcurrentCounter _counter = new();
 
         private readonly IDictionary<Priority, TaskItemList> _queues = new SortedDictionary<Priority, TaskItemList>()
         {
@@ -31,10 +31,6 @@ namespace Farfetch.LoadShedding.Tasks
             set => this._counter.Limit = value;
         }
 
-        public Action<int, TaskItem> OnItemEnqueued { get; set; }
-
-        public Action<int, TaskItem> OnItemDequeued { get; set; }
-
         public void Enqueue(TaskItem item)
         {
             int count = this.EnqueueItem(item);
@@ -54,7 +50,7 @@ namespace Farfetch.LoadShedding.Tasks
 
             if (nextQueueItem != null)
             {
-                this.DecrementCounter(nextQueueItem);
+                this.DecrementCounter();
             }
 
             return nextQueueItem;
@@ -64,7 +60,7 @@ namespace Farfetch.LoadShedding.Tasks
         {
             if (this._queues[item.Priority].Remove(item))
             {
-                this.DecrementCounter(item);
+                this.DecrementCounter();
             }
         }
 
@@ -82,8 +78,6 @@ namespace Farfetch.LoadShedding.Tasks
 
             var count = this._counter.Increment();
 
-            this.OnItemEnqueued?.Invoke(count, item);
-
             return count;
         }
 
@@ -99,16 +93,14 @@ namespace Farfetch.LoadShedding.Tasks
                 return;
             }
 
-            this._counter.Decrement();
-
-            this.DecrementCounter(lastItem);
+            this.DecrementCounter();
 
             lastItem.Reject();
         }
 
-        private void DecrementCounter(TaskItem nextQueueItem)
+        private void DecrementCounter()
         {
-            this.OnItemDequeued?.Invoke(this._counter.Decrement(), nextQueueItem);
+            this._counter.Decrement();
         }
     }
 }
