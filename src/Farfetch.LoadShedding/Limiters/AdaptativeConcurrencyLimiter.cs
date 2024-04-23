@@ -50,7 +50,7 @@ namespace Farfetch.LoadShedding.Limiters
         /// </summary>
         public Task ExecuteAsync(Func<Task> function, CancellationToken cancellationToken = default)
         {
-            return this.ExecuteAsync(0, function, cancellationToken);
+            return this.ExecuteAsync(Priority.Normal, function, cancellationToken);
         }
 
         /// <summary>
@@ -72,6 +72,11 @@ namespace Farfetch.LoadShedding.Limiters
                     if (delayTask == resultTask)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
+                    }
+
+                    if (resultTask.IsFaulted && resultTask.Exception is not null)
+                    {
+                        throw resultTask.Exception;
                     }
                 }
                 finally

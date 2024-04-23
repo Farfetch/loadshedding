@@ -30,5 +30,25 @@ namespace Farfetch.LoadShedding.Tests.Limiters
             // Assert
             Assert.True(wasInvoked);
         }
+
+        [Fact]
+        public async Task ExecuteAsync_WhenThereIsException_ThrowTheException()
+        {
+            // Arrange
+            var exceptedException = new Exception("Something went wrong");
+            var exceptionTask = Task.Run(() => throw exceptedException);
+
+            var target = new AdaptativeConcurrencyLimiter(
+                new ConcurrencyOptions(),
+                Mock.Of<ILimitCalculator>(),
+                Mock.Of<IQueueSizeCalculator>(),
+                new LoadSheddingEvents());
+
+            // Act
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => target.ExecuteAsync(() => exceptionTask));
+
+            // Assert
+            Assert.Equal(exceptedException, exception.InnerException);
+        }
     }
 }
