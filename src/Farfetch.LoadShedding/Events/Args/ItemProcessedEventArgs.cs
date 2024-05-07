@@ -8,15 +8,14 @@ namespace Farfetch.LoadShedding.Events.Args
     /// </summary>
     public class ItemProcessedEventArgs : TaskItemEventArgs
     {
-        internal ItemProcessedEventArgs(Priority priority, TimeSpan processingTime, IReadOnlyCounter concurrencyCounter)
-            : base(priority, concurrencyCounter)
+        internal ItemProcessedEventArgs(ITaskItem taskItem, IReadOnlyCounter concurrencyCounter)
+            : base(taskItem, concurrencyCounter)
         {
-            this.ProcessingTime = processingTime;
         }
 
         /// <summary>
         /// Gets time spent to process the task.
         /// </summary>
-        public TimeSpan ProcessingTime { get; }
+        public TimeSpan ProcessingTime => TaskItem.ProcessingTime;
     }
 }

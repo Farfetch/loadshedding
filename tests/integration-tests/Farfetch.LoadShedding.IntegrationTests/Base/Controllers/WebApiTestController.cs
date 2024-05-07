@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Farfetch.LoadShedding.AspNetCore.Attributes;
 using Farfetch.LoadShedding.IntegrationTests.Base.Models;
+using Farfetch.LoadShedding.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Farfetch.LoadShedding.IntegrationTests.Base.Controllers
@@ -12,7 +13,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Base.Controllers
     {
         [HttpGet]
         [Route("people")]
-        [EndpointPriority(Tasks.Priority.Critical)]
+        [EndpointPriority(Priority.Critical)]
         public async Task<IActionResult> GetPeopleAsync()
         {
             await Task.Delay(500);
@@ -26,6 +27,14 @@ namespace Farfetch.LoadShedding.IntegrationTests.Base.Controllers
                     UserName = "john.doe",
                 },
             });
+        }
+
+        [HttpDelete]
+        [Route("people")]
+        [EndpointPriority(Priority.Critical)]
+        public Task DeletePeopleAsync()
+        {
+            return Task.Delay(500);
         }
     }
 }

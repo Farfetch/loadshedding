@@ -31,6 +31,7 @@ namespace Farfetch.LoadShedding.AspNetCore.Tests.Middlewares
             this._headers = new HeaderDictionary();
 
             this._requestMock.Setup(x => x.Headers).Returns(() => this._headers);
+            this._requestMock.Setup(x => x.Method).Returns(HttpMethod.Get.Method);
 
             this._contextMock.SetupGet(x => x.Request).Returns(() => this._requestMock.Object);
             this._contextMock.SetupGet(x => x.Response).Returns(() => this._responseMock.Object);

@@ -20,6 +20,19 @@ namespace Farfetch.LoadShedding.Prometheus.Metrics
         /// <inheritdoc/>
         protected override string DefaultName => "http_requests_concurrency_items_total";
 
+        ///// <summary>
+        ///// Sets the value of the gauge.
+        ///// </summary>
+        ///// <param name="method">The method.</param>
+        ///// <param name="priority">The priority.</param>
+        ///// <param name="value">The value.</param>
+        //public void Set(string method, string priority, double value)
+        //{
+        //    this.Metric?
+        //        .WithLabels(method, priority)
+        //        .Set(value);
+        //}
+
         /// <summary>
         /// Increments the value of the gauge.
         /// </summary>

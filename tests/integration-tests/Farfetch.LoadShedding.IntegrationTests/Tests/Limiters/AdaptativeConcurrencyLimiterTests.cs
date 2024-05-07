@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using Farfetch.LoadShedding.AspNetCore.Options;
 using Farfetch.LoadShedding.Configurations;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
 {
@@ -19,16 +21,56 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
         private readonly ConcurrentBag<int> _concurrencyLimits = new();
         private readonly ConcurrentBag<Priority> _enqueuedItems = new();
         private readonly CollectorRegistry _collectorRegistry;
+        private readonly ITestOutputHelper output;
 
         private int _numberOfRejectedRequests;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdaptativeConcurrencyLimiterTests"/> class.
         /// </summary>
-        public AdaptativeConcurrencyLimiterTests()
+        public AdaptativeConcurrencyLimiterTests(ITestOutputHelper output)
         {
             this._numberOfRejectedRequests = 0;
             this._collectorRegistry = new CollectorRegistry();
+            this.output = output;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Fact]
+        public async Task GetAsync_WithReducedLimitAndQueueSizeAndMultiplePriorities_SomeRequestsAreRejected()
+        {
+            // Arrange
+            const int InitialConcurrencyLimit = 100, InitialQueueSize = 4, MinSuccessfulRequests = 44;
+
+            var options = new ConcurrencyOptions
+            {
+                QueueTimeoutInMs = 2,
+                InitialConcurrencyLimit = InitialConcurrencyLimit,
+                InitialQueueSize = InitialQueueSize,
+                MinQueueSize = InitialQueueSize,
+            };
+
+            var client = this.GetClient(options, x => x.UseHeaderPriorityResolver());
+
+            // Act
+            var tasks = Enumerable
+                .Range(0, 160)
+                .Select(i => Task.Run(() =>
+                {
+                    var message = new HttpRequestMessage(i % 3 == 0 ? HttpMethod.Delete : HttpMethod.Get, "/api/people");
+                    message.Headers.Add("X-Priority", i % 2 == 0 ? "critical" : "normal");
+                    return client.SendAsync(message);
+                }));
+
+            var results = await Task.WhenAll(tasks.ToArray());
+
+            // Assert
+            Assert.True(results.Count(x => x.IsSuccessStatusCode) >= MinSuccessfulRequests);
+            Assert.Contains(results, x => x.StatusCode == HttpStatusCode.ServiceUnavailable);
+            await AssertMetrics(client, labels: new[] { ("GET", "normal"), ("GET", "critical"), ("DELETE", "normal"), ("DELETE", "critical") }, hadQueueItems: true, hadRejectedItems: true);
         }
 
         /// <summary>
@@ -319,12 +361,12 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             return testServer.CreateClient();
         }
 
-        private static Task AssertMetrics(HttpClient client, string priority, bool hadQueueItems, bool hadRejectedItems)
+        private Task AssertMetrics(HttpClient client, string priority, bool hadQueueItems, bool hadRejectedItems)
         {
             return AssertMetrics(client, new[] { ("GET", priority) }, hadQueueItems, hadRejectedItems);
         }
 
-        private static async Task AssertMetrics(HttpClient client, (string method, string priority)[] labels, bool hadQueueItems, bool hadRejectedItems)
+        private async Task AssertMetrics(HttpClient client, (string method, string priority)[] labels, bool hadQueueItems, bool hadRejectedItems)
         {
             var metrics = await client.GetAsync("/monitoring/metrics");
 
@@ -334,6 +376,7 @@ namespace Farfetch.LoadShedding.IntegrationTests.Tests.Limiters
             Assert.Equal("text/plain", metrics.Content?.Headers?.ContentType?.MediaType);
 
             var content = metrics.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+            output.WriteLine(content);
 
             // Assert Concurrency
             Assert.Contains("TYPE http_requests_concurrency_items_total gauge", content);

@@ -7,8 +7,8 @@ namespace Farfetch.LoadShedding.Events.Args
     /// </summary>
     public class ItemRejectedEventArgs : ItemEventArgs
     {
-        internal ItemRejectedEventArgs(Priority priority, string reason)
-            : base(priority)
+        internal ItemRejectedEventArgs(ITaskItem taskItem, string reason)
+            : base(taskItem)
         {
             Reason = reason;
         }

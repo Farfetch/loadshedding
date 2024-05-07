@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Farfetch.LoadShedding.AspNetCore.Configurators;
 using Farfetch.LoadShedding.Prometheus;
 using Farfetch.LoadShedding.Prometheus.Metrics;
@@ -65,10 +66,12 @@ namespace Farfetch.LoadShedding
 
             events.ItemDequeued.Subscribe(args =>
             {
-                var method = accessor.GetMethod();
+                var method = EnsureMethodLabel(args.Labels, accessor);
+                var priority = args.Priority.FormatPriority();
 
-                queueItemsGauge.Decrement(method, args.Priority.FormatPriority());
-                queueTimeHistogram.Observe(method, args.Priority.FormatPriority(), args.QueueTime.TotalSeconds);
+                //queueItemsGauge.Set(method, priority, args.QueueCount);
+                queueItemsGauge.Decrement(method, priority);
+                queueTimeHistogram.Observe(method, priority, args.QueueTime.TotalSeconds);
             });
         }
 
@@ -85,9 +88,10 @@ namespace Farfetch.LoadShedding
 
             events.ItemProcessed.Subscribe(args =>
             {
-                var method = accessor.GetMethod();
+                var method = EnsureMethodLabel(args.Labels, accessor);
                 var priority = args.Priority.FormatPriority();
 
+                //concurrencyItemsGauge.Set(method, priority, args.ConcurrencyCount);
                 concurrencyItemsGauge.Decrement(method, priority);
                 taskProcessingTimeHistogram.Observe(method, priority, args.ProcessingTime.TotalSeconds);
             });
@@ -123,9 +127,11 @@ namespace Farfetch.LoadShedding
 
             events.ItemProcessing.Subscribe(args =>
             {
-                concurrencyItemsGauge.Increment(
-                    accessor.GetMethod(),
-                    args.Priority.FormatPriority());
+                var method = EnsureMethodLabel(args.Labels, accessor);
+                var priority = args.Priority.FormatPriority();
+
+                //concurrencyItemsGauge.Set(method, priority, args.ConcurrencyCount);
+                concurrencyItemsGauge.Increment(method, priority);
             });
         }
 
@@ -138,9 +144,11 @@ namespace Farfetch.LoadShedding
 
             events.ItemEnqueued.Subscribe(args =>
             {
-                queueItemsGauge.Increment(
-                    accessor.GetMethod(),
-                    args.Priority.FormatPriority());
+                var method = EnsureMethodLabel(args.Labels, accessor);
+                var priority = args.Priority.FormatPriority();
+
+                //queueItemsGauge.Set(method, priority, args.QueueCount);
+                queueItemsGauge.Increment(method, priority);
             });
         }
 
@@ -153,11 +161,27 @@ namespace Farfetch.LoadShedding
 
             events.Rejected.Subscribe(args =>
             {
+                var method = EnsureMethodLabel(args.Labels, accessor);
+
                 rejectedCounter.Increment(
-                    accessor.GetMethod(),
+                    method,
                     args.Priority.FormatPriority(),
                     args.Reason);
             });
+        }
+
+        private static string EnsureMethodLabel(IDictionary<string, string> labels, IHttpContextAccessor accessor)
+        {
+            return "GET";
+
+            if (labels.TryGetValue(MetricsConstants.MethodLabel, out var method))
+            {
+                return method;
+            }
+
+            method = GetMethod(accessor);
+            labels.TryAdd(MetricsConstants.MethodLabel, method);
+            return method;
         }
 
         private static string GetMethod(this IHttpContextAccessor accessor)
@@ -168,11 +192,6 @@ namespace Farfetch.LoadShedding
             }
 
             return accessor.HttpContext.Request.Method.ToUpper();
-        }
-
-        private static string FormatPriority(this Priority priority)
-        {
-            return priority.ToString().ToLower();
         }
     }
 }

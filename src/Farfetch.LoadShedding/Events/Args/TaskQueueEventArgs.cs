@@ -9,8 +9,8 @@ namespace Farfetch.LoadShedding.Events.Args
     {
         private readonly IReadOnlyCounter _queueCounter;
 
-        internal TaskQueueEventArgs(Priority priority, IReadOnlyCounter queueCounter)
-            : base(priority)
+        internal TaskQueueEventArgs(ITaskItem taskItem, IReadOnlyCounter queueCounter)
+            : base(taskItem)
         {
             this._queueCounter = queueCounter;
         }

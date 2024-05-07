@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Farfetch.LoadShedding.Tasks
 {
-    internal class TaskItem : IDisposable
+    internal class TaskItem : ITaskItem, IDisposable
     {
         private readonly TaskCompletionSource<bool> _taskSource;
         private readonly Stopwatch _lifetime;
@@ -19,13 +20,15 @@ namespace Farfetch.LoadShedding.Tasks
             this._taskSource = new TaskCompletionSource<bool>();
         }
 
-        public Priority Priority { get; private set; }
+        public Priority Priority { get; }
 
         public TaskResult Status { get; private set; } = TaskResult.Pending;
 
         public TimeSpan WaitingTime => this._waitingTime?.Elapsed ?? TimeSpan.Zero;
 
         public TimeSpan ProcessingTime => this._lifetime.Elapsed - this.WaitingTime;
+
+        public Dictionary<string, string> Labels { get; } = new Dictionary<string, string>();
 
         public Action OnCompleted { get; set; }
 
