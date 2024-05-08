@@ -64,10 +64,7 @@ namespace Farfetch.LoadShedding.Tasks
         {
             lock (this._locker)
             {
-                if (this._count > 0)
-                {
-                    this._count--;
-                }
+                this._count--;
 
                 return this._count;
             }
