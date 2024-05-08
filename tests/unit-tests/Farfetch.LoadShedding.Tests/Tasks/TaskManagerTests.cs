@@ -33,11 +33,12 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             // Arrange
             const int ExpectedTotalCount = 20, ExpectedQueueSize = 20;
 
-            var target = new TaskManager(10, 10);
-
             // Act
-            target.ConcurrencyLimit = ExpectedTotalCount;
-            target.QueueLimit = ExpectedQueueSize;
+            var target = new TaskManager(10, 10)
+            {
+                ConcurrencyLimit = ExpectedTotalCount,
+                QueueLimit = ExpectedQueueSize,
+            };
 
             // Assert
             Assert.Equal(ExpectedTotalCount, target.ConcurrencyLimit);
@@ -71,10 +72,11 @@ namespace Farfetch.LoadShedding.Tests.Tasks
 
             events.ConcurrencyLimitChanged.Subscribe(args => currentLimit = args.Limit);
 
-            var target = new TaskManager(10, 10, Timeout.Infinite, events);
-
             // Act
-            target.ConcurrencyLimit = expectedMaxCount;
+            var target = new TaskManager(10, 10, Timeout.Infinite, events)
+            {
+                ConcurrencyLimit = expectedMaxCount,
+            };
 
             // Assert
             Assert.Equal(expectedMaxCount, currentLimit);
@@ -243,13 +245,12 @@ namespace Farfetch.LoadShedding.Tests.Tasks
             var processingItems = new List<ItemProcessingEventArgs>();
 
             var events = new LoadSheddingEvents();
-
             events.ItemProcessed.Subscribe(args => processedItems.Add(args));
             events.ItemProcessing.Subscribe(args => processingItems.Add(args));
 
             var target = new TaskManager(10, 10, Timeout.Infinite, events);
 
-            var item = await target.AcquireAsync(0);
+            var item = await target.AcquireAsync(Priority.Critical);
 
             // Act
             item.Complete();
