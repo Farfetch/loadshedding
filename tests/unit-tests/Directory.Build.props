@@ -1,0 +1,8 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+
+    <ItemGroup>
+        <Compile Include="$(MSBuildProjectDirectory)/../Traits.cs" Link="Properties/Traits.cs"/>
+        <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
+</Project>
