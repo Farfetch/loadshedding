@@ -59,11 +59,13 @@ namespace Farfetch.LoadShedding.Limiters
         /// </summary>
         public async Task ExecuteAsync(Priority priority, Func<Task> function, CancellationToken cancellationToken = default)
         {
+            using (var delayTaskCancellationSource = new CancellationTokenSource())
+            using (var linkedCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, delayTaskCancellationSource.Token))
             using (var item = await _taskManager.AcquireAsync(priority, cancellationToken))
             {
                 try
                 {
-                    var delayTask = Task.Delay(Timeout.Infinite, cancellationToken);
+                    var delayTask = Task.Delay(Timeout.Infinite, linkedCancellationSource.Token);
 
                     var resultTask = await Task.WhenAny(
                          function.Invoke(),
@@ -72,6 +74,14 @@ namespace Farfetch.LoadShedding.Limiters
                     if (delayTask == resultTask)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
+                    }
+                    else
+                    {
+                        // Stop delayTask, otherwise it is kept indefinetly and leaks CancellationTokenRegistration (DelayPromiseWithCancellation)
+                        delayTaskCancellationSource.Cancel();
+
+                        // await ensures cancellation was received and accepted before we dispose CancellationTokenSource
+                        await delayTask.IgnoreWhenCancelled();
                     }
 
                     if (resultTask.IsFaulted && resultTask.Exception is not null)
