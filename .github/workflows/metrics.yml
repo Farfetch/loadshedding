@@ -38,7 +38,7 @@ jobs:
 
     - name: Run issue-metrics tool for items opened last month
       id: opened-metrics
-      uses: github/issue-metrics@v2
+      uses: github-community-projects/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:farfetch/loadshedding created:${{ env.last_month }} -reason:"not planned"'
@@ -51,7 +51,7 @@ jobs:
 
     - name: Run issue-metrics tool for items closed last month
       id: closed-metrics
-      uses: github/issue-metrics@v2
+      uses: github-community-projects/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:farfetch/loadshedding closed:${{ env.last_month }} -reason:"not planned"'
